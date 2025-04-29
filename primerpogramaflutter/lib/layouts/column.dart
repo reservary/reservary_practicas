@@ -5,17 +5,25 @@ class ColumnExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text('Hola'),
-        Text('Hola'),
-        Text('Hola'),
-        Text('Hola'),
-        Text('Hola'),
-        Text('Hola'),
-        Text('Hola'),
-        Text('Hola'),
-      ],
+    return Container(
+      color: Colors.amber,
+      height: 300,
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text('Hola'),
+          Text('Hola'),
+          Text('Hola'),
+          Text('Hola'),
+          Text('Hola'),
+          Text('Hola'),
+          Text('Hola'),
+          Text('Hola'),
+        ],
+      ),
     );
   }
 }
