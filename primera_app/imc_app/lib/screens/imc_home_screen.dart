@@ -82,7 +82,7 @@ class _ImcHomeScreen extends State<ImcHomeScreen> {
                   context,
                   MaterialPageRoute(builder: (context) => ImcResultScreen( //si se le indican los parametros no tiene porque ir en orden
                     weight: selectedWeight,
-                    age: selectedAge,
+                    height: selectedHeight,
                   )),
                 );
               },
