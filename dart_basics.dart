@@ -58,8 +58,170 @@ void exercise2() {
 
 }
 
+void exercise3(){
+
+  /*
+    📌 EJERCICIO 3: IDENTIFICAR NÚMEROS POSITIVOS Y NEGATIVOS
+
+    ✅ Objetivo:
+    Escribe un programa en Dart que determine si un número ingresado 
+    por el usuario es positivo, negativo o cero.
+  */
+  
+  print('Introduce un numero entero: ');
+  int n = int.parse(stdin.readLineSync()!);
+  if(n > 0){
+    print('El numero es positivo');
+  }
+  else if(n < 0){
+    print('El numero es negativo');
+  }
+  else{
+    print('El numero es 0');
+  }
+
+}
+
+void exercise4(){
+
+  print('Introduce un numero entero: ');
+  int n = int.parse(stdin.readLineSync()!);
+  switch(n){
+    case 1:
+      print('Enero');
+      break;
+    case 2:
+      print('Febrero');
+      break;
+    case 3:
+      print('Marzo');
+      break;
+    case 4:
+      print('Abril');
+      break;
+    case 5: 
+      print('Mayo');
+      break;
+    case 6:
+      print('Junio');
+      break;
+    case 7:
+      print('Julio');
+      break;
+    case 8:
+      print('Agosto');
+      break;
+    case 9:
+      print('Septiembre');
+      break;
+    case 10:
+      print('Octubre');
+      break;
+    case 11:
+      print('Noviembre');
+      break;
+    case 12:
+      print('Diciembre');
+      break;
+    default:
+      print('Mes no valido');
+  }
+}
+
+void exercise5(){
+
+  /*
+    📌 EJERCICIO 5: SUMA DE NÚMEROS PARES EN UNA LISTA
+
+    ✅ Objetivo:
+    Escribe un programa en Dart que tome una lista de números enteros 
+    y calcule la suma de todos los números pares en la lista.
+
+    🔹 Ejemplo:
+    Entrada: [1, 2, 3, 4, 5, 6]
+    Salida: La suma de los números pares es: 12
+
+    TIP Si a un número le hacemos %2 == 0 es par.
+  */
+
+
+  List<int> numbers = [2,4,7,4,7,9,1];
+  int sumaPares = 0;
+  for(int i = 0; i < numbers.length; i++){
+    if(numbers[i] % 2 == 0){
+      sumaPares += numbers[i];
+    }
+  }
+  print('La suma de los numeros pares es: $sumaPares');
+}
+
+void exercise6(){
+
+   /*
+    📌 EJERCICIO 6: FILTRAR PALABRAS ÚNICAS EN UN SET
+
+    ✅ Objetivo:
+    Escribe un programa en Dart que reciba una lista de palabras con 
+    algunas repetidas y almacene solo las palabras únicas en un Set. 
+    Luego, muestra el conjunto resultante.
+
+    🔹 Ejemplo:
+    Entrada: ["dart", "flutter", "dart", "codigo", "flutter", "movil"]
+    Salida: {dart, flutter, codigo, movil}
+*/
+
+  List<String> words = [
+    "dart",
+    "flutter",
+    "dart",
+    "codigo",
+    "flutter",
+    "movil"
+  ];
+  Set<String> result = {};
+
+  for (var element in words) {
+    result.add(element);
+  }
+  print(result);
+}
+
+void exercise7(){
+
+  List<String> words = [
+    "dart",
+    "flutter",
+    "dart",
+    "codigo",
+    "flutter",
+    "movil",
+    "dart"
+  ];
+
+  Map<String, int> NumeroPalabras = {};
+  Set<String> palabrasUnicas = {};
+  palabrasUnicas.addAll(words);
+
+  for (var element in palabrasUnicas) {
+    int contador = 0;
+    for (var element2 in words) {
+      if(element == element2){
+        contador++;
+        NumeroPalabras[element] = contador;
+      }
+    }
+  }
+  print(NumeroPalabras);
+
+}
+
 void main(List<String> arguments) {
-  exercise1();
-  exercise2();
+  //exercise1();
+  //exercise2();
+  //exercise3();
+  //exercise4();
+  //exercise5();
+  //exercise6();
+  exercise7();
 }
 
