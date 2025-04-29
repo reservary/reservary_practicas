@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'calculadora.dart';
+
 
 void main() {
   /*
@@ -14,7 +14,16 @@ void main() {
   4. Mostrar el resultado.
   */
 
-  runApp(MyApp());
+  String fechaString = "2003";
+  int fechaActual = 2025;
+  int fecha = int.parse(fechaString);
+  int edad = fechaActual - fecha;
+  print("Tienes $edad años");
+  if (edad >= 18) {
+    print("Eres mayor de edad");
+  } else {
+    print("Eres menor de edad");
+  }
 
 }
 
