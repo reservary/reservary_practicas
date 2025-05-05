@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class DeepSeekLlamadas {
-  final String apiKey = 'sk-b54158abc5b84d80a41933b58710aad2';
+  final String apiKey = 'KEY_DEEPSEEK';
   final String baseUrl = 'https://api.deepseek.com/v1';
 
   Future<void> generarPlan(Map<dynamic, dynamic> datosUsuario) async {
