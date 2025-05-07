@@ -100,44 +100,44 @@ class Pruebas extends StatelessWidget {
           //     ],
           //   ),
           // ),
-          SizedBox(
-            height: 500,
-            width: 900,
-            child: Chart(
-              data: [
-                {'genre': 'Sports', 'sold': 275},
-                {'genre': 'Strategy', 'sold': 115},
-                {'genre': 'Action', 'sold': 120},
-                {'genre': 'Shooter', 'sold': 350},
-                {'genre': 'Other', 'sold': 150},
-              ],
-              variables: {
-                'genre': Variable(
-                  accessor: (Map map) => map['genre'] as String,
-                ),
-                'sold': Variable(accessor: (Map map) => map['sold'] as num),
-              },
-              marks: [
-                IntervalMark(
-                  label: LabelEncode(
-                    encoder: (tuple) => Label(tuple['genre'].toString()),
-                  ),
-                  color: ColorEncode(
-                    variable: 'genre',
-                    values: [
-                      Color(0xFF00FF95),
-                      Color(0xFF02F7F7),
-                      Color(0xFFF7F702),
-                      Color(0xFF000000),
-                      Color(0xFFF70202),
-                    ],
-                  ),
-                ),
-              ],
-              coord: PolarCoord(transposed: true, startAngle: 0),
-              axes: [Defaults.radialAxis..label = null, Defaults.circularAxis],
-            ),
-          ),
+          // SizedBox(
+          //   height: 500,
+          //   width: 900,
+          //   child: Chart(
+          //     data: [
+          //       {'genre': 'Sports', 'sold': 275},
+          //       {'genre': 'Strategy', 'sold': 115},
+          //       {'genre': 'Action', 'sold': 120},
+          //       {'genre': 'Shooter', 'sold': 350},
+          //       {'genre': 'Other', 'sold': 150},
+          //     ],
+          //     variables: {
+          //       'genre': Variable(
+          //         accessor: (Map map) => map['genre'] as String,
+          //       ),
+          //       'sold': Variable(accessor: (Map map) => map['sold'] as num),
+          //     },
+          //     marks: [
+          //       IntervalMark(
+          //         label: LabelEncode(
+          //           encoder: (tuple) => Label(tuple['genre'].toString()),
+          //         ),
+          //         color: ColorEncode(
+          //           variable: 'genre',
+          //           values: [
+          //             Color(0xFF00FF95),
+          //             Color(0xFF02F7F7),
+          //             Color(0xFFF7F702),
+          //             Color(0xFF000000),
+          //             Color(0xFFF70202),
+          //           ],
+          //         ),
+          //       ),
+          //     ],
+          //     coord: PolarCoord(transposed: true, startAngle: 0),
+          //     axes: [Defaults.radialAxis..label = null, Defaults.circularAxis],
+          //   ),
+          //),
         ],
       ),
     );
