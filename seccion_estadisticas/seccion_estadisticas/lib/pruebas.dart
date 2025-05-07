@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:graphic/graphic.dart';
+//import 'package:graphic/graphic.dart';
 
 class Pruebas extends StatelessWidget {
   const Pruebas({super.key});
