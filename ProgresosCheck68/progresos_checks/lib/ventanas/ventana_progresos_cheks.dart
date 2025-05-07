@@ -34,11 +34,11 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
           SizedBox(
             width: 300,
             child: Padding(
-              padding: const EdgeInsets.all(25.0),
+              padding: const EdgeInsets.all(20.0),
               child: DesplegableProgresosChecks(onSelectionChanged: actualizarSeleccion),
             )),
           Expanded(child: Padding(
-            padding: const EdgeInsets.all(25.0),
+            padding: const EdgeInsets.all(20.0),
             child: GraficoComparacion(checksSeleccionados: checksSeleccionados),
           )),
         ],

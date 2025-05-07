@@ -62,16 +62,7 @@ class Check  {
         _checkCalf = checkCalf,
         _checkPhotos = checkPhotos;
 
-    Check.prueba({
-      required int postId,     
-      required String createdDate,
-      required String modifiedDate,
-      required String checkWeight,
-    })
-      : _postId = postId,
-        _createdDate = createdDate,
-        _modifiedDate = modifiedDate,
-        _checkWeight = checkWeight;
+    
  
 
   
