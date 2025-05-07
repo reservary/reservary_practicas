@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   graphic: ^2.5.1
   date_range_filter: ^2.0.2
+  calendar_date_picker2: ^2.0.0
+  omni_datetime_picker: ^2.1.1
   
 dev_dependencies:
   flutter_test:
