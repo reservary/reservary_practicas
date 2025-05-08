@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:seccion_estadisticas/pruebas_filtros.dart';
-import 'package:seccion_estadisticas/stadistics_screen.dart';
+import 'package:seccion_estadisticas_v2/stadistics_screen.dart';
 
 void main() {
   runApp(const MainApp());
