@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seccion_estadisticas_v2/pruebas_pie_chart.dart';
 import 'package:seccion_estadisticas_v2/stadistics_screen.dart';
 
 void main() {
