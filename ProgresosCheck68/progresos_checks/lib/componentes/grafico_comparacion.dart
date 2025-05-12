@@ -1,4 +1,4 @@
-import 'package:fl_chart/fl_chart.dart';
+
 import 'package:flutter/material.dart';
 import 'package:progresos_checks/componentes/grafico_peso.dart';
 import 'package:progresos_checks/datos/post_model_check.dart';

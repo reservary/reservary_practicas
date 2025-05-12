@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:progresos_checks/componentes/desplegable_progresos_checks.dart';
 import 'package:progresos_checks/componentes/grafico_comparacion.dart';
-import 'package:progresos_checks/componentes/lista_checks_peso.dart';
+import 'package:progresos_checks/componentes/grafico_medidas.dart';
 import 'package:progresos_checks/controlador/controlador_progresos.dart';
 import 'package:progresos_checks/datos/post_model_check.dart';
 import 'package:progresos_checks/nucleo/app_colores.dart';
@@ -27,6 +27,7 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
 
   @override
   Widget build(BuildContext context) {
+    double chartWidth = checksSeleccionados.length * 200;
     return Container(
       decoration: BoxDecoration(color: AppColores.fondo),
       child: SingleChildScrollView(
@@ -38,12 +39,9 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
                 alignment: Alignment.centerLeft,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    
                     backgroundColor: AppColores.fondoComponentes,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        8,
-                      ), 
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   onPressed: () {
@@ -52,7 +50,9 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
                     });
                   },
                   child: Text(
-                    mostrarDesplegable ? "Ocultar selección" : "Seleccionar checks",
+                    mostrarDesplegable
+                        ? "Ocultar selección"
+                        : "Seleccionar checks",
                     style: EstilosTexto.titulos,
                   ),
                 ),
@@ -71,15 +71,49 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Container(
-                decoration: BoxDecoration(color: AppColores.fondoComponentes, borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(
+                  color: AppColores.fondoComponentes,
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: SizedBox(
                     height: 500,
                     width: double.infinity,
-                
+
                     child: GraficoComparacion(
                       checksSeleccionados: checksSeleccionados,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColores.fondoComponentes,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: SizedBox(
+                    height: 500,
+                    width: double.infinity,
+                    child: Column(
+                      children: [
+                        Text("GRAFICO DE MEDIDAS", style: EstilosTexto.titulos,),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: SizedBox(
+                              height: 400,
+                              width: chartWidth,
+                              child: GraficoMedidas(checks: checksSeleccionados),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
