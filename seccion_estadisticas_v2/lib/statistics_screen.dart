@@ -63,7 +63,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Total facturas",
+                                    "Total reservas:",
                                     style: TextStyle(
                                       fontSize: 35,
                                       fontWeight: FontWeight.bold,
