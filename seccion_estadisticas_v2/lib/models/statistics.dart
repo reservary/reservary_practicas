@@ -1,6 +1,6 @@
 import 'package:seccion_estadisticas_v2/models/progress.dart';
 
-class Stadistics {
+class Statistics {
   final int totalBookings;
   final double totalBilledAmount;
   final List<Progress> progress;
@@ -8,10 +8,10 @@ class Stadistics {
   final Map<String,int> totalBookingsByStatus;
   final Map<String,int> totalBookingsPerService;
 
-  Stadistics({required this.totalBookings, required this.totalBilledAmount, required this.progress, required this.totalBookingsPerEmployee, required this.totalBookingsByStatus,required this.totalBookingsPerService});
+  Statistics({required this.totalBookings, required this.totalBilledAmount, required this.progress, required this.totalBookingsPerEmployee, required this.totalBookingsByStatus,required this.totalBookingsPerService});
 
-  factory Stadistics.fromJson(Map<String,dynamic> json){
-    return Stadistics(
+  factory Statistics.fromJson(Map<String,dynamic> json){
+    return Statistics(
       totalBookings: json['totalBookings'],
       totalBilledAmount: json['totalBilledAmount'],
       progress: (json['progress'] as List).map((e)=> Progress.fromJson(e)).toList(),
