@@ -1,24 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:test_1/ejercicio1.dart';
+import 'dart:math';
 
 void main() {
-  
-  runApp(const ValidacionNumeroApp());
-}
-
-class ValidacionNumeroApp extends StatelessWidget {
-  const ValidacionNumeroApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      
-      debugShowCheckedModeBanner: false,
-      title: 'Validación de Número',
-      theme: ThemeData(
-        primarySwatch: Colors.grey,
-      ),
-      home: const ValidacionNumeroPage(),
-    );
-  }
+  Random random = Random();
+  double precio = 35.25;
+  double propina = 25;
+  int personas = random.nextInt(10) + 1; // Número aleatorio entre 1 y 10
+  double precioTotal = precio + propina;
+  double resultado = precioTotal / personas;
+  print("Número de personas: $personas");
+  print("Cada uno paga ${resultado.toStringAsFixed(2)}");
 }
