@@ -72,7 +72,7 @@ class _StatusDataState extends State<StatusData> {
                       title:
                           isTouched == index ? "${statusValues[index]}" : "",
                       color: _getColorByStatus(status[index]),
-                      radius: 100,
+                      radius: 120,
                       borderSide: BorderSide(
                         width: isTouched==index? 3:0,
                       )
@@ -93,10 +93,10 @@ class _StatusDataState extends State<StatusData> {
               return Row(
                 children: [
                   Container(
-                    width: isTouched == index ? 15 : 10,
-                    height: isTouched == index ? 15 : 10,
+                    width: isTouched == index ? 20 : 15,
+                    height: isTouched == index ? 20 : 15,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
+                      shape: BoxShape.rectangle,
                       color: color,
                     ),
                   ),

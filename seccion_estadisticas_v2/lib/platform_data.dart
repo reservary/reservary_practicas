@@ -1,9 +1,9 @@
-import 'dart:convert';
+//import 'dart:convert';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:seccion_estadisticas_v2/models/statistics.dart';
+//import 'package:flutter/services.dart';
+//import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
 class PlatformData extends StatefulWidget {
   const PlatformData({super.key});
@@ -14,20 +14,20 @@ class PlatformData extends StatefulWidget {
 
 class _PlatformDataState extends State<PlatformData> {
   int touchedIndexPieChart2 = -1;
-  Statistics? _stats;
-  Future<void> _loadStats() async {
-    final jsonString = await rootBundle.loadString('assets/data/data.json');
-    final jsonMap = jsonDecode(jsonString);
-    setState(() {
-      _stats = Statistics.fromJson(jsonMap);
-    });
-  }
+  //Statistics? _stats;
+  // Future<void> _loadStats() async {
+  //   final jsonString = await rootBundle.loadString('assets/data/data.json');
+  //   final jsonMap = jsonDecode(jsonString);
+  //   setState(() {
+  //     _stats = Statistics.fromJson(jsonMap);
+  //   });
+  // }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadStats();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _loadStats();
+  // }
   @override
   Widget build(BuildContext context) {
     
@@ -38,6 +38,7 @@ class _PlatformDataState extends State<PlatformData> {
         padding: const EdgeInsets.all(16.0),
         child: PieChart(
           PieChartData(
+            centerSpaceRadius: 0.5,
             pieTouchData: PieTouchData(
               touchCallback: (
                 FlTouchEvent event,
@@ -59,7 +60,7 @@ class _PlatformDataState extends State<PlatformData> {
                 value: 20,
                 title: "20%",
                 color: const Color(0xFF2196F3),
-                radius: touchedIndexPieChart2 == 0 ? 120 : 100,
+                radius: touchedIndexPieChart2 == 0 ? 130 : 120,
                 titleStyle: TextStyle(
                   fontSize: touchedIndexPieChart2 == 0 ? 16 : 12,
                 ),
@@ -91,7 +92,7 @@ class _PlatformDataState extends State<PlatformData> {
                 value: 30,
                 title: "30%",
                 color: Colors.red,
-                radius: touchedIndexPieChart2 == 1 ? 120 : 100,
+                radius: touchedIndexPieChart2 == 1 ? 130 : 120,
                 titleStyle: TextStyle(
                   fontSize: touchedIndexPieChart2 == 1 ? 16 : 12,
                 ),
@@ -100,7 +101,7 @@ class _PlatformDataState extends State<PlatformData> {
                   width: 2,
                 ),
                 badgeWidget: Container(
-                  width: touchedIndexPieChart2 == 1 ? 50 : 45,
+                  width: touchedIndexPieChart2 == 1 ? 50 : 0,
                   height: touchedIndexPieChart2 == 1 ? 50 : 45,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -119,7 +120,7 @@ class _PlatformDataState extends State<PlatformData> {
                 value: 50,
                 title: touchedIndexPieChart2 == 2 ? "50%" : "",
                 color: Colors.green,
-                radius: touchedIndexPieChart2 == 2 ? 120 : 100,
+                radius: touchedIndexPieChart2 == 2 ? 130 : 120,
                 titleStyle: TextStyle(
                   fontSize: touchedIndexPieChart2 == 2 ? 16 : 12,
                 ),

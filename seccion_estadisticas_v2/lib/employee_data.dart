@@ -13,6 +13,7 @@ class PruebasPieChart extends StatefulWidget {
 }
 
 class _PruebasPieChartState extends State<PruebasPieChart> {
+  int isTouched = -1;
   Statistics? _stats;
   Future<void> _loadStats() async {
     final jsonString = await rootBundle.loadString('assets/data/data.json');
@@ -34,20 +35,24 @@ class _PruebasPieChartState extends State<PruebasPieChart> {
       return const Center(child: CircularProgressIndicator());
     }
     final dataEmployee = _stats!.totalBookingsPerEmployee;
-    final pieSections =
-        dataEmployee.entries.map((entry) {
-          return PieChartSectionData(
-            value: entry.value.toDouble(),
-            title: "${entry.key}",
-            color: _getColorFromId(entry.key),
-            radius: 100,
-            titleStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          );
-        }).toList();
+    final List<String> employe = dataEmployee.keys.toList();
+    final List<int> bookings = dataEmployee.values.toList();
+    // final pieSections =
+    //     dataEmployee.entries.map((entry) {
+    //       int index = dataEmployee.entries.toList().indexOf(entry);
+    //       return PieChartSectionData(
+    //         value: entry.value.toDouble(),
+    //         title: entry.key,
+    //         color: _getColorFromId(entry.key),
+    //         radius: isTouched==index ?130:120,
+    //         titleStyle: TextStyle(
+    //           fontSize: 14,
+    //           fontWeight: FontWeight.bold,
+    //           color: Colors.white,
+    //         ),
+    //         borderSide: BorderSide(width: ? 2 : 0),
+    //       );
+    //     }).toList();
 
     return Column(
       children: [
@@ -56,9 +61,49 @@ class _PruebasPieChartState extends State<PruebasPieChart> {
             height: 295,
             child: PieChart(
               PieChartData(
+                pieTouchData: PieTouchData(
+                  touchCallback: (
+                    FlTouchEvent event,
+                    PieTouchResponse? pieTouchResponse,
+                  ) {
+                    setState(() {
+                      if (!event.isInterestedForInteractions ||
+                          pieTouchResponse == null ||
+                          pieTouchResponse.touchedSection == null) {
+                        isTouched = -1;
+                        return;
+                      }
+                      isTouched =
+                          pieTouchResponse.touchedSection!.touchedSectionIndex;
+                    });
+                  },
+                ),
                 centerSpaceRadius: 0,
                 sectionsSpace: 1,
-                sections: pieSections,
+                sections: List.generate(dataEmployee.length, (index) {
+                  return PieChartSectionData(
+                    value: bookings[index].toDouble(),
+                    color: _getColorFromId(employe[index]),
+                    radius: isTouched==index?130:120,
+                    borderSide: BorderSide(width: isTouched == index ? 3 : 0),
+                    badgePositionPercentageOffset: 1.23,
+                    badgeWidget: Container(
+                      width: isTouched == index ? 60 : 0,
+                      height: isTouched == index ? 60 : 0,
+                      decoration: BoxDecoration(
+                        //color: const Color.fromARGB(255, 12, 12, 12),
+                        shape: BoxShape.circle,
+                        border: Border.all(width: isTouched == index ? 2 : 0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          employe[index],
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
               ),
             ),
           ),
