@@ -18,6 +18,7 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
   bool mostrarDesplegable = false;
   final ControladorProgresos controladorProgresos = ControladorProgresos();
   List<Check> checksSeleccionados = [];
+
   void actualizarSeleccion(List<Check> seleccionados) {
     setState(() {
       checksSeleccionados = seleccionados;
@@ -27,7 +28,6 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
 
   @override
   Widget build(BuildContext context) {
-    double chartWidth = checksSeleccionados.length * 200;
     return Container(
       decoration: BoxDecoration(color: AppColores.fondo),
       child: SingleChildScrollView(
@@ -67,7 +67,6 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
                   onSelectionChanged: actualizarSeleccion,
                 ),
               ),
-
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Container(
@@ -78,9 +77,8 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: SizedBox(
-                    height: 500,
+                    height: 400,
                     width: double.infinity,
-
                     child: GraficoComparacion(
                       checksSeleccionados: checksSeleccionados,
                     ),
@@ -91,30 +89,21 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Container(
+                height: 800,
+                width: double.infinity,
                 decoration: BoxDecoration(
                   color: AppColores.fondoComponentes,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: SizedBox(
-                    height: 500,
-                    width: double.infinity,
-                    child: Column(
-                      children: [
-                        Text("GRAFICO DE MEDIDAS", style: EstilosTexto.titulos,),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: SizedBox(
-                              height: 400,
-                              width: chartWidth,
-                              child: GraficoMedidas(checks: checksSeleccionados),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: Column(
+                    children: [
+                      Text("GRAFICO DE MEDIDAS", style: EstilosTexto.titulos),
+                      Expanded(
+                        child: GraficoMedidas(checks: checksSeleccionados),
+                      ),
+                    ],
                   ),
                 ),
               ),

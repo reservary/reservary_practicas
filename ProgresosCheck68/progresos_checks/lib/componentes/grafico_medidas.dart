@@ -9,26 +9,36 @@ class GraficoMedidas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (checks.isEmpty || _todasLasMedidasSonNulas()) {
-      return const SizedBox(
-        height: 300,
-        child: Center(
-          child: Text(
-            'No hay datos para mostrar.',
-            style: TextStyle(fontSize: 16),
-          ),
+      return const Center(
+        child: Text(
+          'No hay datos para mostrar.',
+          style: TextStyle(fontSize: 16),
         ),
       );
     }
 
-    return SizedBox(
-      height: 400,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: LineChart(
-          _buildChartData(),
-          duration: const Duration(milliseconds: 250),
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double chartWidth = checks.length * 200;
+
+        return SizedBox(
+          height: constraints.maxHeight,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              width: chartWidth,
+              height: constraints.maxHeight,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: LineChart(
+                  _buildChartData(),
+                  duration: const Duration(milliseconds: 250),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -50,7 +60,7 @@ class GraficoMedidas extends StatelessWidget {
           tooltipBorder: BorderSide.none,
         ),
       ),
-      gridData: const FlGridData(show: true),
+      gridData: const FlGridData(show: false),
       titlesData: FlTitlesData(
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
@@ -60,20 +70,15 @@ class GraficoMedidas extends StatelessWidget {
             getTitlesWidget: (double value, TitleMeta meta) {
               final int index = value.toInt();
               if (index < 0 || index >= checks.length) return const SizedBox.shrink();
-              final fechaStr = checks[index].createdDate;
-              DateTime fecha;
-              try {
-                fecha = DateTime.parse(fechaStr);
-              } catch (_) {
-                return const SizedBox.shrink();
-              }
               return SideTitleWidget(
                 meta: meta,
                 space: 8,
                 child: Column(
                   children: [
-                    Text("Check" + checks[index].postId.toString()),
-                    Text(checks[index].createdDate, style: const TextStyle(fontSize: 12),
+                    Text("Check ${checks[index].postId}"),
+                    Text(
+                      checks[index].createdDate,
+                      style: const TextStyle(fontSize: 12),
                     ),
                   ],
                 ),
@@ -109,48 +114,36 @@ class GraficoMedidas extends StatelessWidget {
       ),
       minX: 0,
       maxX: (checks.length - 1).toDouble(),
-      minY: _getMinY(),
-      maxY: _getMaxY(),
+      minY: 0,
+      maxY: _getRoundedMaxY(),
       lineBarsData: [
-        _buildLine(
-          checks,
-          (c) => double.tryParse(c.checkWaist) ?? 0.0,
-          Colors.green,
-        ),
-        _buildLine(
-          checks,
-          (c) => double.tryParse(c.checkChest) ?? 0.0,
-          Colors.pink,
-        ),
-        _buildLine(
-          checks,
-          (c) => double.tryParse(c.checkThigh) ?? 0.0,
-          Colors.blue,
-        ),
+        _buildLine(checks, (c) => double.tryParse(c.checkWeight) ?? 0.0, Colors.red),
+        _buildLine(checks, (c) => double.tryParse(c.checkNeck) ?? 0.0, Colors.orange),
+        _buildLine(checks, (c) => double.tryParse(c.checkChest) ?? 0.0, Colors.pink),
+        _buildLine(checks, (c) => double.tryParse(c.checkBiceps) ?? 0.0, Colors.purple),
+        _buildLine(checks, (c) => double.tryParse(c.checkForearm) ?? 0.0, Colors.indigo),
+        _buildLine(checks, (c) => double.tryParse(c.checkWaist) ?? 0.0, Colors.green),
+        _buildLine(checks, (c) => double.tryParse(c.checkHip) ?? 0.0, Colors.teal),
+        _buildLine(checks, (c) => double.tryParse(c.checkThigh) ?? 0.0, Colors.blue),
+        _buildLine(checks, (c) => double.tryParse(c.checkCalf) ?? 0.0, Colors.brown),
       ],
     );
   }
 
-  double _getMinY() {
-    final allValues = checks.expand(
-      (c) => [
-        double.tryParse(c.checkWaist) ?? 0.0,
-        double.tryParse(c.checkChest) ?? 0.0,
-        double.tryParse(c.checkThigh) ?? 0.0,
-      ],
-    );
-    return (allValues.reduce((a, b) => a < b ? a : b) - 5).clamp(0, double.infinity);
-  }
-
-  double _getMaxY() {
-    final allValues = checks.expand(
-      (c) => [
-        double.tryParse(c.checkWaist) ?? 0.0,
-        double.tryParse(c.checkChest) ?? 0.0,
-        double.tryParse(c.checkThigh) ?? 0.0,
-      ],
-    );
-    return allValues.reduce((a, b) => a > b ? a : b) + 5;
+  double _getRoundedMaxY() {
+    final allValues = checks.expand((c) => [
+      double.tryParse(c.checkWeight) ?? 0.0,
+      double.tryParse(c.checkNeck) ?? 0.0,
+      double.tryParse(c.checkChest) ?? 0.0,
+      double.tryParse(c.checkBiceps) ?? 0.0,
+      double.tryParse(c.checkForearm) ?? 0.0,
+      double.tryParse(c.checkWaist) ?? 0.0,
+      double.tryParse(c.checkHip) ?? 0.0,
+      double.tryParse(c.checkThigh) ?? 0.0,
+      double.tryParse(c.checkCalf) ?? 0.0,
+    ]);
+    final maxValue = allValues.isEmpty ? 10 : allValues.reduce((a, b) => a > b ? a : b);
+    return ((maxValue + 5) / 5).ceil() * 5; // redondea al múltiplo de 5 más cercano
   }
 
   LineChartBarData _buildLine(
