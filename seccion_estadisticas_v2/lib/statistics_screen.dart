@@ -25,9 +25,6 @@ class _StatisticsScreen extends State<StatisticsScreen> {
     _loadStats();
   }
 
-  int touchedIndexPieChart1 = -1;
-  int touchedIndexPieChart2 = -1;
-  int touchedIndexPieChart3 = -1;
   Future<void> _loadStats() async {
     final jsonString = await rootBundle.loadString('assets/data/data.json');
     final jsonMap = jsonDecode(jsonString);
@@ -46,14 +43,14 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                 children: [
                   Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 24,
-                          bottom: 12,
-                          left: 24,
-                          right: 12,
-                        ),
-                        child: Expanded(
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 24,
+                            left: 24,
+                            bottom: 12,
+                            right: 12,
+                          ),
                           child: SizedBox(
                             height: 295,
                             child: Padding(
@@ -66,15 +63,15 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                                     "Total reservas:",
                                     style: TextStyle(
                                       fontSize: 35,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w100,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
                                     "${_stats!.totalBookings}",
                                     style: TextStyle(
-                                      fontSize: 35,
-                                      fontWeight: FontWeight.bold,
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.w900,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -82,15 +79,15 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                                     "Total facturado:",
                                     style: TextStyle(
                                       fontSize: 35,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w100,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
                                     "${_stats!.totalBilledAmount}",
                                     style: TextStyle(
-                                      fontSize: 35,
-                                      fontWeight: FontWeight.bold,
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.w900,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -121,10 +118,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                           ),
                           child: SizedBox(
                             height: 295,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: PruebasPieChart(),
-                            ),
+                            child: EmployeeData(),
                           ),
                         ),
                       ),
@@ -140,7 +134,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                             left: 24,
                             right: 12,
                           ),
-                          child: ServicesData(),
+                          child: PlatformData(),
                         ),
                       ),
                       Expanded(
@@ -151,7 +145,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                             left: 12,
                             right: 12,
                           ),
-                          child: PlatformData(),
+                          child: ServicesData(),
                         ),
                       ),
                       Expanded(

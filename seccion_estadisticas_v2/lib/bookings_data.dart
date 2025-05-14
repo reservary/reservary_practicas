@@ -39,6 +39,7 @@ class _BookingsDataState extends State<BookingsData> {
     });
     final dates = progress.map((p) => p.date).toList();
     return SizedBox(
+      width: 300,
       height: 295,
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -51,7 +52,7 @@ class _BookingsDataState extends State<BookingsData> {
                     final index = touchedSpot.x.toInt();
                     final entry = progress[index];
                     return LineTooltipItem(
-                      "Billed amount: ${entry.billedAmount}",
+                      "Billed amount: ${entry.billedAmount}€",
                       TextStyle(color: Colors.white),
                     );
                   }).toList();
@@ -69,19 +70,20 @@ class _BookingsDataState extends State<BookingsData> {
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  interval: 10,
-                  reservedSize: 30,
+                  interval: 5,
+                  reservedSize: 25,
                 ),
               ),
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
+                  minIncluded: false,
                   showTitles: true,
                   reservedSize: 20,
-                  interval:0.4,
+                  interval:1,
                   getTitlesWidget: (value, meta) {
                     final index = value.toInt();
                     if (index >= 0 && index < dates.length) {
-                      return Text(dates[index], style: TextStyle(fontSize: 10));
+                      return Text(dates[index], style: TextStyle(fontSize: 12));
                     }
                     return Text("");
                   },
@@ -107,7 +109,7 @@ class _BookingsDataState extends State<BookingsData> {
                 color: Colors.blue,
                 barWidth: 3,
                 dotData: FlDotData(show: true),
-                belowBarData: BarAreaData(show: false),
+                belowBarData: BarAreaData(show: true),
                 spots: spots,
               ),
             ],

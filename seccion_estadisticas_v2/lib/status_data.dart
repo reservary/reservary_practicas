@@ -35,15 +35,15 @@ class _StatusDataState extends State<StatusData> {
     final totalBookingsByStatus = _stats!.totalBookingsByStatus;
     final List<String> status = totalBookingsByStatus.keys.toList();
     final List<int> statusValues = totalBookingsByStatus.values.toList();
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
+    return Expanded(
+      child: Row(
+        children: [
+          SizedBox(
             width: 300,
+
             height: 295,
             child: Padding(
-              padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16),
+              padding: const EdgeInsets.all(16.0),
               child: PieChart(
                 PieChartData(
                   centerSpaceRadius: 0,
@@ -82,27 +82,25 @@ class _StatusDataState extends State<StatusData> {
               ),
             ),
           ),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(status.length, (index) {
-              final name = status[index];
-              final color = _getColorByStatus(name);
-
-              return Row(
-                children: [
-                  Container(
-                    width: isTouched == index ? 20 : 15,
-                    height: isTouched == index ? 20 : 15,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      color: color,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(status.length, (index) {
+                final name = status[index];
+                final color = _getColorByStatus(name);
+      
+                return Row(
+                  children: [
+                    Container(
+                      width: isTouched == index ? 20 : 15,
+                      height: isTouched == index ? 20 : 15,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        color: color,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
+                    Text(
                       name.toUpperCase(),
                       style: TextStyle(
                         fontSize: isTouched == index ? 18 : 14,
@@ -112,13 +110,13 @@ class _StatusDataState extends State<StatusData> {
                                 : FontWeight.normal,
                       ),
                     ),
-                  ),
-                ],
-              );
-            }),
+                  ],
+                );
+              }),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

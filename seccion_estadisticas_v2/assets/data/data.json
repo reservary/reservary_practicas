@@ -18,6 +18,12 @@
           "billedAmount":500.0
        }
     ],
+    "totalBookingsPerPlatform":{
+      "android":12,
+      "ios":10,
+      "adminWeb":2,
+      "ClienteWeb":1
+    },
     "totalBookingsPerEmployee":{
        "123456":50,
        "123457":75,

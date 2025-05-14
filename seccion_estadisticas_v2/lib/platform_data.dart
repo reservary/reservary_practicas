@@ -30,15 +30,13 @@ class _PlatformDataState extends State<PlatformData> {
   // }
   @override
   Widget build(BuildContext context) {
-    
     return SizedBox(
-      width: 200,
       height: 295,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: PieChart(
           PieChartData(
-            centerSpaceRadius: 0.5,
+            centerSpaceRadius: 50,
             pieTouchData: PieTouchData(
               touchCallback: (
                 FlTouchEvent event,
@@ -60,7 +58,7 @@ class _PlatformDataState extends State<PlatformData> {
                 value: 20,
                 title: "20%",
                 color: const Color(0xFF2196F3),
-                radius: touchedIndexPieChart2 == 0 ? 130 : 120,
+                radius: touchedIndexPieChart2 == 0 ? 70 : 65,
                 titleStyle: TextStyle(
                   fontSize: touchedIndexPieChart2 == 0 ? 16 : 12,
                 ),
@@ -72,8 +70,8 @@ class _PlatformDataState extends State<PlatformData> {
                   width: 2,
                 ),
                 badgeWidget: Container(
-                  width: touchedIndexPieChart2 == 0 ? 50 : 45,
-                  height: touchedIndexPieChart2 == 0 ? 50 : 45,
+                  width: touchedIndexPieChart2 == 0 ? 65 : 50,
+                  height: touchedIndexPieChart2 == 0 ? 65 : 50,
                   decoration: BoxDecoration(
                     //color: const Color.fromARGB(255, 12, 12, 12),
                     shape: BoxShape.circle,
@@ -86,13 +84,14 @@ class _PlatformDataState extends State<PlatformData> {
                     ),
                   ),
                 ),
-                badgePositionPercentageOffset: 1.1,
+                badgePositionPercentageOffset:
+                    touchedIndexPieChart2 == 0 ? 1.25 : 1.2,
               ),
               PieChartSectionData(
                 value: 30,
                 title: "30%",
                 color: Colors.red,
-                radius: touchedIndexPieChart2 == 1 ? 130 : 120,
+                radius: touchedIndexPieChart2 == 1 ? 70 : 65,
                 titleStyle: TextStyle(
                   fontSize: touchedIndexPieChart2 == 1 ? 16 : 12,
                 ),
@@ -101,8 +100,8 @@ class _PlatformDataState extends State<PlatformData> {
                   width: 2,
                 ),
                 badgeWidget: Container(
-                  width: touchedIndexPieChart2 == 1 ? 50 : 0,
-                  height: touchedIndexPieChart2 == 1 ? 50 : 45,
+                  width: touchedIndexPieChart2 == 1 ? 65 : 50,
+                  height: touchedIndexPieChart2 == 1 ? 65 : 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
@@ -114,13 +113,14 @@ class _PlatformDataState extends State<PlatformData> {
                     ),
                   ),
                 ),
-                badgePositionPercentageOffset: 1.1,
+                badgePositionPercentageOffset:
+                    touchedIndexPieChart2 == 1 ? 1.25 : 1.2,
               ),
               PieChartSectionData(
                 value: 50,
                 title: touchedIndexPieChart2 == 2 ? "50%" : "",
                 color: Colors.green,
-                radius: touchedIndexPieChart2 == 2 ? 130 : 120,
+                radius: touchedIndexPieChart2 == 2 ? 70 : 65,
                 titleStyle: TextStyle(
                   fontSize: touchedIndexPieChart2 == 2 ? 16 : 12,
                 ),
