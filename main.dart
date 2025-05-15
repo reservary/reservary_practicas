@@ -1,12 +1,25 @@
-import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:ejerciciointerfaz1/core/tema.dart';
+import 'package:ejerciciointerfaz1/pantallas/principal.dart';
 
 void main() {
-  Random random = Random();
-  double precio = 35.25;
-  double propina = 25;
-  int personas = random.nextInt(10) + 1; // Número aleatorio entre 1 y 10
-  double precioTotal = precio + propina;
-  double resultado = precioTotal / personas;
-  print("Número de personas: $personas");
-  print("Cada uno paga ${resultado.toStringAsFixed(2)}");
+  runApp(const MainApp());
+}
+
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+            backgroundColor: AppColors.primary, 
+            foregroundColor: Colors.white,
+            title: Text("Calculadora IMC")),
+        backgroundColor: AppColors.background,
+        body: ImcHomeScreen(),
+      ),
+    );
+  }
 }
