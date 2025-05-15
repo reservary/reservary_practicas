@@ -1,7 +1,11 @@
 //import 'dart:convert';
 
+import 'dart:convert';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:seccion_estadisticas_v2/models/statistics.dart';
 //import 'package:flutter/services.dart';
 //import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
@@ -13,30 +17,34 @@ class PlatformData extends StatefulWidget {
 }
 
 class _PlatformDataState extends State<PlatformData> {
-  int touchedIndexPieChart2 = -1;
-  //Statistics? _stats;
-  // Future<void> _loadStats() async {
-  //   final jsonString = await rootBundle.loadString('assets/data/data.json');
-  //   final jsonMap = jsonDecode(jsonString);
-  //   setState(() {
-  //     _stats = Statistics.fromJson(jsonMap);
-  //   });
-  // }
+  int isTouched = -1;
+  Statistics? _stats;
+  Future<void> _loadStats() async {
+    final jsonString = await rootBundle.loadString('assets/data/data.json');
+    final jsonMap = jsonDecode(jsonString);
+    setState(() {
+      _stats = Statistics.fromJson(jsonMap);
+    });
+  }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loadStats();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final totalBookingsPerPlatform = _stats!.totalBookingsPerPlatform;
+    final List<String> namePlatform = totalBookingsPerPlatform.keys.toList();
+    final List<int> numBookings = totalBookingsPerPlatform.values.toList();
     return SizedBox(
-      height: 295,
+      height: 315,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: PieChart(
           PieChartData(
-            centerSpaceRadius: 50,
+            centerSpaceRadius: 55,
             pieTouchData: PieTouchData(
               touchCallback: (
                 FlTouchEvent event,
@@ -48,92 +56,74 @@ class _PlatformDataState extends State<PlatformData> {
                       pieTouchResponse.touchedSection == null) {
                     return;
                   }
-                  touchedIndexPieChart2 =
+                  isTouched =
                       pieTouchResponse.touchedSection!.touchedSectionIndex;
                 });
               },
             ),
-            sections: [
-              PieChartSectionData(
-                value: 20,
-                title: "20%",
-                color: const Color(0xFF2196F3),
-                radius: touchedIndexPieChart2 == 0 ? 70 : 65,
-                titleStyle: TextStyle(
-                  fontSize: touchedIndexPieChart2 == 0 ? 16 : 12,
-                ),
-                borderSide: BorderSide(
-                  color:
-                      touchedIndexPieChart2 == 0
-                          ? Colors.black
-                          : Color(0xFF2196F3),
-                  width: 2,
-                ),
+            sections: List.generate(numBookings.length, (index) {
+              return PieChartSectionData(
+                value: numBookings[index].toDouble(),
+                title: isTouched == index ? "${numBookings[index]}" : "",
+                color: _getColorPerPlatform(namePlatform[index]),
+                radius: isTouched == index ? 75 : 70,
+                borderSide: BorderSide(width: isTouched == index ? 3 : 0),
                 badgeWidget: Container(
-                  width: touchedIndexPieChart2 == 0 ? 65 : 50,
-                  height: touchedIndexPieChart2 == 0 ? 65 : 50,
+                  width: isTouched == index ? 75 : 0,
+                  height: isTouched == index ? 75 : 0,
                   decoration: BoxDecoration(
-                    //color: const Color.fromARGB(255, 12, 12, 12),
                     shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage("icons/ios.png"),
-                      fit: BoxFit.cover,
-                    ),
-                    border: Border.all(
-                      width: touchedIndexPieChart2 == 0 ? 2 : 0,
+                    border: Border.all(width: isTouched == index ? 2 : 0),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _getStringPerPlatform(namePlatform[index]),
+                      style: TextStyle(
+                        fontSize: isTouched == index ? 15 : 0,
+                        fontWeight:
+                            isTouched == index
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                      ),
                     ),
                   ),
                 ),
-                badgePositionPercentageOffset:
-                    touchedIndexPieChart2 == 0 ? 1.25 : 1.2,
-              ),
-              PieChartSectionData(
-                value: 30,
-                title: "30%",
-                color: Colors.red,
-                radius: touchedIndexPieChart2 == 1 ? 70 : 65,
-                titleStyle: TextStyle(
-                  fontSize: touchedIndexPieChart2 == 1 ? 16 : 12,
-                ),
-                borderSide: BorderSide(
-                  color: touchedIndexPieChart2 == 1 ? Colors.black : Colors.red,
-                  width: 2,
-                ),
-                badgeWidget: Container(
-                  width: touchedIndexPieChart2 == 1 ? 65 : 50,
-                  height: touchedIndexPieChart2 == 1 ? 65 : 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage("icons/android.png"),
-                      fit: BoxFit.cover,
-                    ),
-                    border: Border.all(
-                      width: touchedIndexPieChart2 == 1 ? 2 : 0,
-                    ),
-                  ),
-                ),
-                badgePositionPercentageOffset:
-                    touchedIndexPieChart2 == 1 ? 1.25 : 1.2,
-              ),
-              PieChartSectionData(
-                value: 50,
-                title: touchedIndexPieChart2 == 2 ? "50%" : "",
-                color: Colors.green,
-                radius: touchedIndexPieChart2 == 2 ? 70 : 65,
-                titleStyle: TextStyle(
-                  fontSize: touchedIndexPieChart2 == 2 ? 16 : 12,
-                ),
-                borderSide: BorderSide(
-                  color:
-                      touchedIndexPieChart2 == 2 ? Colors.black : Colors.green,
-                  width: 2,
-                ),
-              ),
-            ],
+                badgePositionPercentageOffset: 1.5,
+              );
+            }),
           ),
         ),
       ),
     );
+  }
+
+  Color _getColorPerPlatform(String nomPlatform) {
+    switch (nomPlatform.toLowerCase()) {
+      case 'ios':
+        return Colors.grey;
+      case 'android':
+        return Colors.green;
+      case 'adminweb':
+        return Colors.blue;
+      case 'clienteweb':
+        return Colors.lime;
+      default:
+        return Colors.red;
+    }
+  }
+
+  String _getStringPerPlatform(String nomPlatform) {
+    switch (nomPlatform.toLowerCase()) {
+      case 'ios':
+        return 'iOS';
+      case 'android':
+        return 'Android';
+      case 'adminweb':
+        return 'Admin web';
+      case 'clienteweb':
+        return 'Cliente web';
+      default:
+        return 'Not defined';
+    }
   }
 }

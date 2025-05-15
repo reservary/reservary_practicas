@@ -34,7 +34,7 @@ class _ServicesDataState extends State<ServicesData> {
     final servicesNames = _stats!.totalBookingsPerService.keys.toList();
     final servicesValues = _stats!.totalBookingsPerService.values.toList();
     return SizedBox(
-      height: 295,
+      height: 315,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: BarChart(

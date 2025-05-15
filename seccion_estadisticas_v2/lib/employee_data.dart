@@ -37,14 +37,14 @@ class _EmployeeDataState extends State<EmployeeData> {
     final dataEmployee = _stats!.totalBookingsPerEmployee;
     final List<String> employe = dataEmployee.keys.toList();
     final List<int> bookings = dataEmployee.values.toList();
-    return Expanded(
-      child: Row(
-        children: [
-          Column(
+    return Row(
+      children: [
+        Flexible(
+          flex: 7,
+          child: Column(
             children: [
               SizedBox(
-                width: 300,
-                height: 295,
+                height: 315,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: PieChart(
@@ -79,23 +79,6 @@ class _EmployeeDataState extends State<EmployeeData> {
                             width: isTouched == index ? 3 : 0,
                           ),
                           badgePositionPercentageOffset: 1.23,
-                          badgeWidget: Container(
-                            width: isTouched == index ? 60 : 0,
-                            height: isTouched == index ? 60 : 0,
-                            decoration: BoxDecoration(
-                              //color: const Color.fromARGB(255, 12, 12, 12),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                width: isTouched == index ? 2 : 0,
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                employe[index],
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ),
-                          ),
                         );
                       }),
                     ),
@@ -104,39 +87,49 @@ class _EmployeeDataState extends State<EmployeeData> {
               ),
             ],
           ),
-          Column(
+        ),
+        Flexible(
+          flex: 3,
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: List.generate(dataEmployee.length, (index) {
               final name = employe[index];
               final color = _getColorFromId(name);
-
+          
               return Row(
                 children: [
-                  Container(
-                    width: isTouched == index ? 20 : 15,
-                    height: isTouched == index ? 20 : 15,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      color: color,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Container(
+                      width: isTouched == index ? 20 : 15,
+                      height: isTouched == index ? 20 : 15,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        color: color,
+                      ),
                     ),
                   ),
-                  Text(
-                    name.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: isTouched == index ? 18 : 14,
-                      fontWeight:
-                          isTouched == index
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5),
+                    child: Text(
+                      name.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: isTouched == index ? 18 : 14,
+                        fontWeight:
+                            isTouched == index
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               );
             }),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

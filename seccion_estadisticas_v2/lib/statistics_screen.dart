@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:seccion_estadisticas_v2/bookings_data.dart';
+import 'package:seccion_estadisticas_v2/general_information.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
 import 'package:seccion_estadisticas_v2/employee_data.dart';
 import 'package:seccion_estadisticas_v2/platform_data.dart';
@@ -35,133 +36,82 @@ class _StatisticsScreen extends State<StatisticsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isSmallScreen = MediaQuery.of(context).size.width < 700;
+
     return Scaffold(
       body:
           _stats == null
               ? const Center(child: CircularProgressIndicator())
-              : Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 24,
-                            left: 24,
-                            bottom: 12,
-                            right: 12,
-                          ),
-                          child: SizedBox(
-                            height: 295,
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Total reservas:",
-                                    style: TextStyle(
-                                      fontSize: 35,
-                                      fontWeight: FontWeight.w100,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    "${_stats!.totalBookings}",
-                                    style: TextStyle(
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    "Total facturado:",
-                                    style: TextStyle(
-                                      fontSize: 35,
-                                      fontWeight: FontWeight.w100,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    "${_stats!.totalBilledAmount}",
-                                    style: TextStyle(
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    isSmallScreen
+                        ? Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: GeneralInformation(),
                             ),
-                          ),
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: BookingsData(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: EmployeeData(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: PlatformData(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: ServicesData(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: StatusData(),
+                            ),
+                          ],
+                        )
+                        : Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(child: Padding(
+                                  padding: const EdgeInsets.only(top: 24,left: 24,right: 12,bottom: 12),
+                                  child: GeneralInformation(),
+                                )),
+                                Expanded(child: Padding(
+                                  padding: const EdgeInsets.only(top: 24,left: 12,right: 12,bottom: 12),
+                                  child: BookingsData(),
+                                )),
+                                Expanded(child: Padding(
+                                  padding: const EdgeInsets.only(top: 24,left: 12,right: 24,bottom: 12),
+                                  child: EmployeeData(),
+                                )),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Expanded(child: Padding(
+                                  padding: const EdgeInsets.only(top: 12,left: 24,right: 12,bottom: 24),
+                                  child: PlatformData(),
+                                )),
+                                Expanded(child: Padding(
+                                  padding: const EdgeInsets.only(top: 12,left: 12,right: 12,bottom: 24),
+                                  child: ServicesData(),
+                                )),
+                                Expanded(child: Padding(
+                                  padding: const EdgeInsets.only(top: 12,left: 12,right: 24,bottom: 24),
+                                  child: StatusData(),
+                                )),
+                              ],
+                            ),
+                          ],
                         ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 24,
-                            bottom: 12,
-                            left: 12,
-                            right: 12,
-                          ),
-                          child: BookingsData(),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 24,
-                            bottom: 12,
-                            left: 12,
-                            right: 24,
-                          ),
-                          child: SizedBox(
-                            height: 295,
-                            child: EmployeeData(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 12,
-                            bottom: 24,
-                            left: 24,
-                            right: 12,
-                          ),
-                          child: PlatformData(),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 12,
-                            bottom: 24,
-                            left: 12,
-                            right: 12,
-                          ),
-                          child: ServicesData(),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 12,
-                            top: 12,
-                            right: 24,
-                            bottom: 24,
-                          ),
-                          child: StatusData(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
     );
   }

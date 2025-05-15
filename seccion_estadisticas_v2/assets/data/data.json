@@ -21,7 +21,7 @@
     "totalBookingsPerPlatform":{
       "android":12,
       "ios":10,
-      "adminWeb":2,
+      "AdminWeb":2,
       "ClienteWeb":1
     },
     "totalBookingsPerEmployee":{

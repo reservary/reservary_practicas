@@ -7,8 +7,9 @@ class Statistics {
   final Map<String,int> totalBookingsPerEmployee;
   final Map<String,int> totalBookingsByStatus;
   final Map<String,int> totalBookingsPerService;
+  final Map<String,int> totalBookingsPerPlatform;
 
-  Statistics({required this.totalBookings, required this.totalBilledAmount, required this.progress, required this.totalBookingsPerEmployee, required this.totalBookingsByStatus,required this.totalBookingsPerService});
+  Statistics({required this.totalBookings, required this.totalBilledAmount, required this.progress, required this.totalBookingsPerEmployee, required this.totalBookingsByStatus,required this.totalBookingsPerService,required this.totalBookingsPerPlatform});
 
   factory Statistics.fromJson(Map<String,dynamic> json){
     return Statistics(
@@ -18,6 +19,7 @@ class Statistics {
       totalBookingsPerEmployee: Map<String,int>.from(json['totalBookingsPerEmployee']),
       totalBookingsByStatus: Map<String,int>.from(json['totalBookingsByStatus']),
       totalBookingsPerService: Map<String,int>.from(json['totalBookingsPerService']),
+      totalBookingsPerPlatform: Map<String,int>.from(json['totalBookingsPerPlatform']),
     );
   }
 }

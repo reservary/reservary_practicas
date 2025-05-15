@@ -39,8 +39,7 @@ class _BookingsDataState extends State<BookingsData> {
     });
     final dates = progress.map((p) => p.date).toList();
     return SizedBox(
-      width: 300,
-      height: 295,
+      height: 315,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: LineChart(
@@ -69,6 +68,7 @@ class _BookingsDataState extends State<BookingsData> {
               ),
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
+                  minIncluded: false,
                   showTitles: true,
                   interval: 5,
                   reservedSize: 25,
@@ -76,14 +76,21 @@ class _BookingsDataState extends State<BookingsData> {
               ),
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
-                  minIncluded: false,
+                  minIncluded: true,
                   showTitles: true,
                   reservedSize: 20,
-                  interval:1,
+                  interval: 1,
                   getTitlesWidget: (value, meta) {
                     final index = value.toInt();
                     if (index >= 0 && index < dates.length) {
-                      return Text(dates[index], style: TextStyle(fontSize: 12));
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(
+                          dates[index],
+                          style: TextStyle(fontSize: 12),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
                     }
                     return Text("");
                   },
