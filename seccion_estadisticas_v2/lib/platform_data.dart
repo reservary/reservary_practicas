@@ -1,16 +1,10 @@
-//import 'dart:convert';
-
-import 'dart:convert';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
-//import 'package:flutter/services.dart';
-//import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
 class PlatformData extends StatefulWidget {
-  const PlatformData({super.key});
+  final Statistics stats;
+  const PlatformData({super.key, required this.stats});
 
   @override
   State<PlatformData> createState() => _PlatformDataState();
@@ -18,24 +12,10 @@ class PlatformData extends StatefulWidget {
 
 class _PlatformDataState extends State<PlatformData> {
   int isTouched = -1;
-  Statistics? _stats;
-  Future<void> _loadStats() async {
-    final jsonString = await rootBundle.loadString('assets/data/data.json');
-    final jsonMap = jsonDecode(jsonString);
-    setState(() {
-      _stats = Statistics.fromJson(jsonMap);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadStats();
-  }
 
   @override
   Widget build(BuildContext context) {
-    final totalBookingsPerPlatform = _stats!.totalBookingsPerPlatform;
+    final totalBookingsPerPlatform = widget.stats.totalBookingsPerPlatform;
     final List<String> namePlatform = totalBookingsPerPlatform.keys.toList();
     final List<int> numBookings = totalBookingsPerPlatform.values.toList();
     return SizedBox(

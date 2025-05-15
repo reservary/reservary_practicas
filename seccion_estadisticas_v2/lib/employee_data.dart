@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
 class EmployeeData extends StatefulWidget {
-  const EmployeeData({super.key});
+  final Statistics stats;
+  const EmployeeData({super.key, required this.stats});
 
   @override
   State<EmployeeData> createState() => _EmployeeDataState();
@@ -14,27 +12,10 @@ class EmployeeData extends StatefulWidget {
 
 class _EmployeeDataState extends State<EmployeeData> {
   int isTouched = -1;
-  Statistics? _stats;
-  Future<void> _loadStats() async {
-    final jsonString = await rootBundle.loadString('assets/data/data.json');
-    final jsonMap = jsonDecode(jsonString);
-    setState(() {
-      _stats = Statistics.fromJson(jsonMap);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadStats();
-  }
 
   @override
   Widget build(BuildContext context) {
-    if (_stats == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    final dataEmployee = _stats!.totalBookingsPerEmployee;
+    final dataEmployee = widget.stats.totalBookingsPerEmployee;
     final List<String> employe = dataEmployee.keys.toList();
     final List<int> bookings = dataEmployee.values.toList();
     return Row(
@@ -96,7 +77,7 @@ class _EmployeeDataState extends State<EmployeeData> {
             children: List.generate(dataEmployee.length, (index) {
               final name = employe[index];
               final color = _getColorFromId(name);
-          
+
               return Row(
                 children: [
                   Padding(

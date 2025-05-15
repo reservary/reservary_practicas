@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
 class StatusData extends StatefulWidget {
-  const StatusData({super.key});
+  final Statistics stats;
+  const StatusData({super.key,required this.stats});
 
   @override
   State<StatusData> createState() => _StatusDataState();
@@ -14,25 +12,11 @@ class StatusData extends StatefulWidget {
 
 class _StatusDataState extends State<StatusData> {
   int isTouched = -1;
-  Statistics? _stats;
-  Future<void> _loadStats() async {
-    final jsonString = await rootBundle.loadString('assets/data/data.json');
-    final jsonMap = jsonDecode(jsonString);
-    setState(() {
-      _stats = Statistics.fromJson(jsonMap);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadStats();
-  }
+  
 
   @override
   Widget build(BuildContext context) {
-    
-    final totalBookingsByStatus = _stats!.totalBookingsByStatus;
+    final totalBookingsByStatus = widget.stats.totalBookingsByStatus;
     final List<String> status = totalBookingsByStatus.keys.toList();
     final List<int> statusValues = totalBookingsByStatus.values.toList();
     return Row(
@@ -71,12 +55,14 @@ class _StatusDataState extends State<StatusData> {
                         return PieChartSectionData(
                           value: statusValues[index].toDouble(),
                           title:
-                              isTouched == index ? "${statusValues[index]}" : "",
+                              isTouched == index
+                                  ? "${statusValues[index]}"
+                                  : "",
                           color: _getColorByStatus(status[index]),
                           radius: 120,
                           borderSide: BorderSide(
-                            width: isTouched==index? 3:0,
-                          )
+                            width: isTouched == index ? 3 : 0,
+                          ),
                         );
                       }),
                     ),
@@ -95,7 +81,7 @@ class _StatusDataState extends State<StatusData> {
               children: List.generate(status.length, (index) {
                 final name = status[index];
                 final color = _getColorByStatus(name);
-                  
+
                 return Row(
                   children: [
                     Padding(

@@ -1,39 +1,21 @@
-import 'dart:convert';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
 class BookingsData extends StatefulWidget {
-  const BookingsData({super.key});
+  final Statistics stats;
+  const BookingsData({super.key,required this.stats});
 
   @override
   State<BookingsData> createState() => _BookingsDataState();
 }
 
 class _BookingsDataState extends State<BookingsData> {
-  Statistics? _stats;
-  Future<void> _loadStats() async {
-    final jsonString = await rootBundle.loadString('assets/data/data.json');
-    final jsonMap = jsonDecode(jsonString);
-    setState(() {
-      _stats = Statistics.fromJson(jsonMap);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadStats();
-  }
+  
 
   @override
   Widget build(BuildContext context) {
-    if (_stats == null) {
-      return Center(child: CircularProgressIndicator());
-    }
-    final progress = _stats!.progress;
+    final progress = widget.stats.progress;
     final spots = List<FlSpot>.generate(progress.length, (index) {
       return FlSpot(index.toDouble(), progress[index].bookings.toDouble());
     });

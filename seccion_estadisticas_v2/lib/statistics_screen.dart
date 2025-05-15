@@ -50,27 +50,27 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: GeneralInformation(),
+                              child: GeneralInformation(stats: _stats!,),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: BookingsData(),
+                              child: BookingsData(stats: _stats!),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: EmployeeData(),
+                              child: EmployeeData(stats: _stats!),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: PlatformData(),
+                              child: PlatformData(stats: _stats!),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: ServicesData(),
+                              child: ServicesData(stats: _stats!),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: StatusData(),
+                              child: StatusData(stats: _stats!),
                             ),
                           ],
                         )
@@ -78,34 +78,76 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                           children: [
                             Row(
                               children: [
-                                Expanded(child: Padding(
-                                  padding: const EdgeInsets.only(top: 24,left: 24,right: 12,bottom: 12),
-                                  child: GeneralInformation(),
-                                )),
-                                Expanded(child: Padding(
-                                  padding: const EdgeInsets.only(top: 24,left: 12,right: 12,bottom: 12),
-                                  child: BookingsData(),
-                                )),
-                                Expanded(child: Padding(
-                                  padding: const EdgeInsets.only(top: 24,left: 12,right: 24,bottom: 12),
-                                  child: EmployeeData(),
-                                )),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 24,
+                                      left: 24,
+                                      right: 12,
+                                      bottom: 12,
+                                    ),
+                                    child: GeneralInformation(stats: _stats!,),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 24,
+                                      left: 12,
+                                      right: 12,
+                                      bottom: 12,
+                                    ),
+                                    child: BookingsData(stats: _stats!),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 24,
+                                      left: 12,
+                                      right: 24,
+                                      bottom: 12,
+                                    ),
+                                    child: EmployeeData(stats: _stats!),
+                                  ),
+                                ),
                               ],
                             ),
                             Row(
                               children: [
-                                Expanded(child: Padding(
-                                  padding: const EdgeInsets.only(top: 12,left: 24,right: 12,bottom: 24),
-                                  child: PlatformData(),
-                                )),
-                                Expanded(child: Padding(
-                                  padding: const EdgeInsets.only(top: 12,left: 12,right: 12,bottom: 24),
-                                  child: ServicesData(),
-                                )),
-                                Expanded(child: Padding(
-                                  padding: const EdgeInsets.only(top: 12,left: 12,right: 24,bottom: 24),
-                                  child: StatusData(),
-                                )),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 12,
+                                      left: 24,
+                                      right: 12,
+                                      bottom: 24,
+                                    ),
+                                    child: PlatformData(stats: _stats!),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 12,
+                                      left: 12,
+                                      right: 12,
+                                      bottom: 24,
+                                    ),
+                                    child: ServicesData(stats: _stats!),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 12,
+                                      left: 12,
+                                      right: 24,
+                                      bottom: 24,
+                                    ),
+                                    child: StatusData(stats: _stats!),
+                                  ),
+                                ),
                               ],
                             ),
                           ],

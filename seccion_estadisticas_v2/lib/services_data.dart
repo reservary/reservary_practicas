@@ -1,38 +1,21 @@
-import 'dart:convert';
 import 'dart:math' as math;
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
 class ServicesData extends StatefulWidget {
-  const ServicesData({super.key});
+  final Statistics stats;
+  const ServicesData({super.key, required this.stats});
 
   @override
   State<ServicesData> createState() => _ServicesDataState();
 }
 
 class _ServicesDataState extends State<ServicesData> {
-  Statistics? _stats;
-  Future<void> _loadStats() async {
-    final jsonString = await rootBundle.loadString('assets/data/data.json');
-    final jsonMap = jsonDecode(jsonString);
-    setState(() {
-      _stats = Statistics.fromJson(jsonMap);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadStats();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final servicesNames = _stats!.totalBookingsPerService.keys.toList();
-    final servicesValues = _stats!.totalBookingsPerService.values.toList();
+    final servicesNames = widget.stats.totalBookingsPerService.keys.toList();
+    final servicesValues = widget.stats.totalBookingsPerService.values.toList();
     return SizedBox(
       height: 315,
       child: Padding(
