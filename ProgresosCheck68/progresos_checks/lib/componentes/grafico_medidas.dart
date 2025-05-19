@@ -4,11 +4,17 @@ import 'package:progresos_checks/datos/post_model_check.dart';
 
 class GraficoMedidas extends StatelessWidget {
   final List<Check> checks;
-  const GraficoMedidas({super.key, required this.checks});
+  final List<String> medidasSeleccionadas;
+
+  const GraficoMedidas({
+    super.key,
+    required this.checks,
+    required this.medidasSeleccionadas,
+  });
 
   @override
   Widget build(BuildContext context) {
-    if (checks.isEmpty || _todasLasMedidasSonNulas()) {
+    if (checks.isEmpty || medidasSeleccionadas.isEmpty) {
       return const Center(
         child: Text(
           'No hay datos para mostrar.',
@@ -39,14 +45,6 @@ class GraficoMedidas extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  bool _todasLasMedidasSonNulas() {
-    return checks.every((c) =>
-      (double.tryParse(c.checkWaist) ?? 0) == 0 &&
-      (double.tryParse(c.checkChest) ?? 0) == 0 &&
-      (double.tryParse(c.checkThigh) ?? 0) == 0
     );
   }
 
@@ -116,18 +114,63 @@ class GraficoMedidas extends StatelessWidget {
       maxX: (checks.length - 1).toDouble(),
       minY: 0,
       maxY: _getRoundedMaxY(),
-      lineBarsData: [
-        _buildLine(checks, (c) => double.tryParse(c.checkWeight) ?? 0.0, Colors.red),
-        _buildLine(checks, (c) => double.tryParse(c.checkNeck) ?? 0.0, Colors.orange),
-        _buildLine(checks, (c) => double.tryParse(c.checkChest) ?? 0.0, Colors.pink),
-        _buildLine(checks, (c) => double.tryParse(c.checkBiceps) ?? 0.0, Colors.purple),
-        _buildLine(checks, (c) => double.tryParse(c.checkForearm) ?? 0.0, Colors.indigo),
-        _buildLine(checks, (c) => double.tryParse(c.checkWaist) ?? 0.0, Colors.green),
-        _buildLine(checks, (c) => double.tryParse(c.checkHip) ?? 0.0, Colors.teal),
-        _buildLine(checks, (c) => double.tryParse(c.checkThigh) ?? 0.0, Colors.blue),
-        _buildLine(checks, (c) => double.tryParse(c.checkCalf) ?? 0.0, Colors.brown),
-      ],
+      lineBarsData: _buildSelectedLines(),
     );
+  }
+
+  List<LineChartBarData> _buildSelectedLines() {
+    final List<Color> colores = [
+      Colors.red,
+      Colors.orange,
+      Colors.pink,
+      Colors.purple,
+      Colors.indigo,
+      Colors.green,
+      Colors.teal,
+      Colors.blue,
+      Colors.brown,
+    ];
+
+    return medidasSeleccionadas.asMap().entries.map((entry) {
+      int i = entry.key;
+      String medida = entry.value;
+
+      double Function(Check) getValue;
+
+      switch (medida) {
+        case 'Peso':
+          getValue = (c) => double.tryParse(c.checkWeight) ?? 0.0;
+          break;
+        case 'Cuello':
+          getValue = (c) => double.tryParse(c.checkNeck) ?? 0.0;
+          break;
+        case 'Pecho':
+          getValue = (c) => double.tryParse(c.checkChest) ?? 0.0;
+          break;
+        case 'Bíceps':
+          getValue = (c) => double.tryParse(c.checkBiceps) ?? 0.0;
+          break;
+        case 'Antebrazo':
+          getValue = (c) => double.tryParse(c.checkForearm) ?? 0.0;
+          break;
+        case 'Cintura':
+          getValue = (c) => double.tryParse(c.checkWaist) ?? 0.0;
+          break;
+        case 'Cadera':
+          getValue = (c) => double.tryParse(c.checkHip) ?? 0.0;
+          break;
+        case 'Muslo':
+          getValue = (c) => double.tryParse(c.checkThigh) ?? 0.0;
+          break;
+        case 'Pantorrilla':
+          getValue = (c) => double.tryParse(c.checkCalf) ?? 0.0;
+          break;
+        default:
+          getValue = (_) => 0.0;
+      }
+
+      return _buildLine(checks, getValue, colores[i % colores.length]);
+    }).toList();
   }
 
   double _getRoundedMaxY() {
@@ -143,7 +186,7 @@ class GraficoMedidas extends StatelessWidget {
       double.tryParse(c.checkCalf) ?? 0.0,
     ]);
     final maxValue = allValues.isEmpty ? 10 : allValues.reduce((a, b) => a > b ? a : b);
-    return ((maxValue + 5) / 5).ceil() * 5; // redondea al múltiplo de 5 más cercano
+    return ((maxValue + 5) / 5).ceil() * 5;
   }
 
   LineChartBarData _buildLine(
