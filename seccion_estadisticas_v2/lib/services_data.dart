@@ -14,12 +14,6 @@ class ServicesData extends StatefulWidget {
 class _ServicesDataState extends State<ServicesData> {
   List<String> selectedServices = [];
 
-  @override
-  void initState() {
-    super.initState();
-    selectedServices = [];
-  }
-
   void _showServicesSelector() async {
     final List<String> servicesNames =
         widget.stats.totalBookingsPerService.keys.toList();
@@ -82,18 +76,18 @@ class _ServicesDataState extends State<ServicesData> {
   @override
   Widget build(BuildContext context) {
     final dataServices = widget.stats.totalBookingsPerService;
-    final filteredNames =
+    final filteredEntries =
         dataServices.entries
             .where((entry) => selectedServices.contains(entry.key))
-            .map((entry) => entry.key)
             .toList();
+    final filteredNames = List<String>.from(filteredEntries.map((e) => e.key));
     final filteredValues =
-        dataServices.entries
-            .where((entry) => selectedServices.contains(entry.key))
-            .map((entry) => entry.value)
-            .toList();
-
-    if (filteredNames.isEmpty) {
+        filteredEntries.map((e) {
+          final val = e.value;
+          if (val.isNaN || val.isInfinite) return 0.0;
+          return val.toDouble();
+        }).toList();
+    if (filteredNames.isEmpty || filteredValues.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -118,15 +112,15 @@ class _ServicesDataState extends State<ServicesData> {
         children: [
           Row(
             children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: _showServicesSelector,
-                    child: Text("Seleccionar servicios"),
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(8.0),
+              //     child: ElevatedButton(
+              //       onPressed: _showServicesSelector,
+              //       child: Text("Seleccionar servicios"),
+              //     ),
+              //   ),
+              // ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -193,7 +187,7 @@ class _ServicesDataState extends State<ServicesData> {
                       x: index,
                       barRods: [
                         BarChartRodData(
-                          toY: filteredValues[index].toDouble(),
+                          toY: filteredValues[index],
                           color: Colors.blue,
                           width: 10,
                         ),

@@ -169,12 +169,12 @@ class _EmployeeDataState extends State<EmployeeData> {
                         },
                       ),
                       centerSpaceRadius: 0,
-                      sectionsSpace: 1,
+                      //sectionsSpace: 1,
                       sections: List.generate(filteredEmploye.length, (index) {
                         return PieChartSectionData(
                           value: bookings[index].toDouble(),
                           color: _getColorFromId(employee[index]),
-                          radius: isTouched == index ? 100 : 90,
+                          radius: isTouched == index ? 120 : 110,
                           borderSide: BorderSide(
                             width: isTouched == index ? 3 : 0,
                           ),

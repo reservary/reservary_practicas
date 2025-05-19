@@ -59,7 +59,7 @@ class _StatusDataState extends State<StatusData> {
                                   ? "${statusValues[index]}"
                                   : "",
                           color: _getColorByStatus(status[index]),
-                          radius: 120,
+                          radius: isTouched==index?120:110,
                           borderSide: BorderSide(
                             width: isTouched == index ? 3 : 0,
                           ),

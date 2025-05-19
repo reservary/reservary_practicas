@@ -50,7 +50,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: GeneralInformation(stats: _stats!,),
+                              child: GeneralInformation(stats: _stats!),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(24.0),
@@ -86,7 +86,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                                       right: 12,
                                       bottom: 12,
                                     ),
-                                    child: GeneralInformation(stats: _stats!,),
+                                    child: GeneralInformation(stats: _stats!),
                                   ),
                                 ),
                                 Expanded(
