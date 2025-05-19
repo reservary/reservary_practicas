@@ -5,6 +5,7 @@ import 'package:progresos_checks/componentes/grafico_medidas.dart';
 import 'package:progresos_checks/componentes/grafico_peso.dart';
 import 'package:progresos_checks/datos/post_model_check.dart';
 import 'package:progresos_checks/nucleo/app_colores.dart';
+import 'package:progresos_checks/nucleo/estilos_texto.dart';
 import 'package:progresos_checks/nucleo/generador_checks.dart';
 
 class VentanaProgresosChecks extends StatefulWidget {
@@ -55,69 +56,91 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
         .map((entry) => entry.key)
         .toList();
 
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
-      color: AppColores.fondo,
+      decoration: BoxDecoration(color: AppColores.fondo),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            DesplegableChecks(
-              titulo: "SELECCIONAR CHECKS",
-              elementos: checksDisponibles,
-              onSelectionChanged: actualizarChecksSeleccionados,
-            ),
-            const SizedBox(height: 24),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColores.fondoComponentes,
-                borderRadius: BorderRadius.circular(8),
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: DesplegableChecks(
+                titulo: "SELECCIONAR CHECKS",
+                elementos: checksDisponibles,
+                onSelectionChanged: actualizarChecksSeleccionados,
               ),
-              padding: const EdgeInsets.all(20.0),
-              height: 400,
-              width: double.infinity,
-              child: checksSeleccionados.isEmpty ||
-                      checksSeleccionados.values.every((v) => !v)
-                  ? const Center(
-                      child: Text(
-                        'No hay datos para mostrar en peso.',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    )
-                  : GraficoPeso(checksSeleccionados: checksSeleccionados),
             ),
-            const SizedBox(height: 24),
-            DesplegableMedidas(
-              titulo: "SELECCIONAR MEDIDAS",
-              medidasDisponibles: medidasDisponibles,
-              onSelectionChanged: actualizarMedidasSeleccionadas,
-            ),
-            const SizedBox(height: 24),
-            Container(
-              decoration: BoxDecoration(
-                color: AppColores.fondoComponentes,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.all(20.0),
-              height: 400,
-              width: double.infinity,
-              child: checksParaGraficos.isEmpty || medidasSeleccionadas.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No hay datos para mostrar.',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: SizedBox(
-                        width:
-                            (checksParaGraficos.length * 200).toDouble().clamp(300, 1000),
-                        child: GraficoMedidas(
-                          checks: checksParaGraficos,
-                          medidasSeleccionadas: medidasSeleccionadas,
+
+            // Gráfico de peso expandido con scroll horizontal
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColores.fondoComponentes,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.all(20.0),
+                height: 400,
+                width: double.infinity,
+                child: checksSeleccionados.isEmpty ||
+                        checksSeleccionados.values.every((v) => !v)
+                    ? const Center(
+                        child: Text(
+                          'No hay datos para mostrar en peso.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(minWidth: screenWidth),
+                          child: GraficoPeso(
+                            checksSeleccionados: checksSeleccionados,
+                          ),
                         ),
                       ),
-                    ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: DesplegableMedidas(
+                titulo: "SELECCIONAR MEDIDAS",
+                medidasDisponibles: medidasDisponibles,
+                onSelectionChanged: actualizarMedidasSeleccionadas,
+              ),
+            ),
+
+            // Gráfico de medidas expandido con scroll horizontal
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColores.fondoComponentes,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.all(20.0),
+                height: 400,
+                width: double.infinity,
+                child: checksParaGraficos.isEmpty || medidasSeleccionadas.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'No hay datos para mostrar.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(minWidth: screenWidth),
+                          child: GraficoMedidas(
+                            checks: checksParaGraficos,
+                            medidasSeleccionadas: medidasSeleccionadas,
+                          ),
+                        ),
+                      ),
+              ),
             ),
           ],
         ),
