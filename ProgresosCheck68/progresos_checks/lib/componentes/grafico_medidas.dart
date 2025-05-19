@@ -25,7 +25,7 @@ class GraficoMedidas extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        double chartWidth = checks.length * 200;
+        double chartWidth = checks.length * 150;
 
         return SizedBox(
           height: constraints.maxHeight,

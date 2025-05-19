@@ -40,7 +40,6 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
     final checksDisponibles = GeneradorChecks.obtenerChecksEstaticos();
 
     final medidasDisponibles = [
-      'Peso',
       'Cuello',
       'Pecho',
       'Bíceps',
@@ -121,7 +120,7 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding: const EdgeInsets.all(20.0),
-                height: 400,
+                height: 600,
                 width: double.infinity,
                 child: checksParaGraficos.isEmpty || medidasSeleccionadas.isEmpty
                     ? const Center(
