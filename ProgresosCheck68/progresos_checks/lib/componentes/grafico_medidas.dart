@@ -23,28 +23,41 @@ class GraficoMedidas extends StatelessWidget {
       );
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double chartWidth = checks.length * 150;
+    return Column(
+      children: [
+        Expanded(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              double chartWidth = checks.length * 150;
 
-        return SizedBox(
-          height: constraints.maxHeight,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SizedBox(
-              width: chartWidth,
-              height: constraints.maxHeight,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: LineChart(
-                  _buildChartData(),
-                  duration: const Duration(milliseconds: 250),
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: chartWidth,
+                  height: constraints.maxHeight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: LineChart(
+                      _buildChartData(),
+                      duration: const Duration(milliseconds: 250),
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
-        );
-      },
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            children: _buildLeyenda(),
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 
@@ -123,7 +136,7 @@ class GraficoMedidas extends StatelessWidget {
       Colors.red,
       Colors.orange,
       Colors.pink,
-      Colors.purple,
+      Colors.yellow,
       Colors.indigo,
       Colors.green,
       Colors.teal,
@@ -209,5 +222,40 @@ class GraficoMedidas extends StatelessWidget {
       dotData: const FlDotData(show: true),
       belowBarData: BarAreaData(show: false),
     );
+  }
+
+  List<Widget> _buildLeyenda() {
+    final List<Color> colores = [
+      Colors.red,
+      Colors.orange,
+      Colors.pink,
+      Colors.yellow,
+      Colors.indigo,
+      Colors.green,
+      Colors.teal,
+      Colors.blue,
+      Colors.brown,
+    ];
+
+    return medidasSeleccionadas.asMap().entries.map((entry) {
+      int i = entry.key;
+      String medida = entry.value;
+
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              color: colores[i % colores.length],
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(medida),
+        ],
+      );
+    }).toList();
   }
 }
