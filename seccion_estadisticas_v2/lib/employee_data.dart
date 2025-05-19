@@ -169,7 +169,7 @@ class _EmployeeDataState extends State<EmployeeData> {
                         },
                       ),
                       centerSpaceRadius: 0,
-                      //sectionsSpace: 1,
+                      sectionsSpace: 1,
                       sections: List.generate(filteredEmploye.length, (index) {
                         return PieChartSectionData(
                           value: bookings[index].toDouble(),

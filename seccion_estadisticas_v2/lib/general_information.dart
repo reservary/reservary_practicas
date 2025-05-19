@@ -24,19 +24,19 @@ class _GeneralInformationState extends State<GeneralInformation> {
         children: [
           Text(
             "Total reservas:",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w100),
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w100),
           ),
           Text(
             "${widget.stats.totalBookings}",
-            style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900),
+            style: TextStyle(fontSize: 45, fontWeight: FontWeight.w900),
           ),
           Text(
             "Total facturado:",
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w100),
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.w100),
           ),
           Text(
             "${widget.stats.totalBilledAmount}",
-            style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900),
+            style: TextStyle(fontSize: 45, fontWeight: FontWeight.w900),
           ),
         ],
       ),
