@@ -142,7 +142,7 @@ class GraficoMedidas extends StatelessWidget {
                 space: 12,
                 child: Text(
                   '${value.toInt()} cm',
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600), // fuente más pequeña
+                  style: const TextStyle(fontSize: 14,), // fuente más pequeña
                 ),
               );
             },

@@ -30,10 +30,8 @@ class GraficoPeso extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Cambiar 150 a 150.0 para que sea double
         final chartWidth = checksOrdenados.length * 150.0;
 
-        // Obtener los puntos FlSpot para peso
         final spots = List.generate(
           checksOrdenados.length,
           (index) => FlSpot(
@@ -42,7 +40,6 @@ class GraficoPeso extends StatelessWidget {
           ),
         );
 
-        // Calcular maxY para ajustar el eje vertical
         final maxY = (spots.map((s) => s.y).fold(0.0, (a, b) => a > b ? a : b) + 10).ceilToDouble();
 
         return SizedBox(
@@ -56,6 +53,43 @@ class GraficoPeso extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: LineChart(
                   LineChartData(
+                    lineTouchData: LineTouchData(
+                      enabled: true,
+                      handleBuiltInTouches: true,
+                      getTouchedSpotIndicator: (barData, spotIndexes) {
+                        return spotIndexes.map((index) {
+                          return TouchedSpotIndicatorData(
+                            FlLine(color: Colors.blueAccent.withOpacity(0.4), strokeWidth: 3),
+                            FlDotData(
+                              show: true,
+                              getDotPainter: (spot, percent, bar, index) =>
+                                  FlDotCirclePainter(
+                                    radius: 6,
+                                    color: Colors.blueAccent,
+                                    strokeWidth: 2,
+                                    strokeColor: Colors.white,
+                                  ),
+                            ),
+                          );
+                        }).toList();
+                      },
+                      touchTooltipData: LineTouchTooltipData(
+                        tooltipRoundedRadius: 8,
+                        tooltipPadding: const EdgeInsets.all(8),
+                        tooltipBorder: BorderSide(color: Colors.black12),
+                        getTooltipItems: (touchedSpots) {
+                          return touchedSpots.map((spot) {
+                            return LineTooltipItem(
+                              '${spot.y.toStringAsFixed(1)} kg',
+                              const TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }).toList();
+                        },
+                      ),
+                    ),
                     gridData: FlGridData(
                       show: true,
                       drawVerticalLine: true,
@@ -128,9 +162,9 @@ class GraficoPeso extends StatelessWidget {
                         spots: spots,
                         isCurved: true,
                         color: Colors.blueAccent,
-                        barWidth: 4,
+                        barWidth: 8, // línea más gruesa
                         isStrokeCapRound: true,
-                        dotData: const FlDotData(show: true),
+                        dotData: const FlDotData(show: false), // puntos ocultos normalmente
                         belowBarData: BarAreaData(
                           show: true,
                           color: Colors.blueAccent.withOpacity(0.2),

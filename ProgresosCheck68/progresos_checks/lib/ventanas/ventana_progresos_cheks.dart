@@ -120,7 +120,7 @@ class _VentanaProgresosChecksState extends State<VentanaProgresosChecks> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 padding: const EdgeInsets.all(20.0),
-                height: 600,
+                height: 1000,
                 width: double.infinity,
                 child: checksParaGraficos.isEmpty || medidasSeleccionadas.isEmpty
                     ? const Center(
