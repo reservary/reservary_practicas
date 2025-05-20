@@ -96,15 +96,6 @@ class _ComparadorImagenesState extends State<ComparadorImagenes> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
-        Slider(
-          value: _posicion,
-          onChanged: (value) {
-            setState(() {
-              _posicion = value;
-            });
-          },
-        ),
       ],
     );
   }
