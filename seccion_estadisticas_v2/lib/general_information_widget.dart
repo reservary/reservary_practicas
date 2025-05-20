@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
-class GeneralInformation extends StatefulWidget {
+class GeneralInformationWidget extends StatefulWidget {
   final Statistics stats;
-  const GeneralInformation({super.key,required this.stats});
+  const GeneralInformationWidget({super.key,required this.stats});
 
   @override
-  State<GeneralInformation> createState() => _GeneralInformationState();
+  State<GeneralInformationWidget> createState() => _GeneralInformationWidgetState();
 }
 
-class _GeneralInformationState extends State<GeneralInformation> {
+class _GeneralInformationWidgetState extends State<GeneralInformationWidget> {
   
 
 

@@ -2,15 +2,15 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
-class EmployeeData extends StatefulWidget {
+class EmployeeGraphicWidget extends StatefulWidget {
   final Statistics stats;
-  const EmployeeData({super.key, required this.stats});
+  const EmployeeGraphicWidget({super.key, required this.stats});
 
   @override
-  State<EmployeeData> createState() => _EmployeeDataState();
+  State<EmployeeGraphicWidget> createState() => _EmployeeGraphicWidgetState();
 }
 
-class _EmployeeDataState extends State<EmployeeData> {
+class _EmployeeGraphicWidgetState extends State<EmployeeGraphicWidget> {
   int isTouched = -1;
   List<String> selectedEmployees = [];
 
@@ -91,11 +91,22 @@ class _EmployeeDataState extends State<EmployeeData> {
         filteredEmploye.map((entry) => entry.key).toList();
     final List<int> bookings =
         filteredEmploye.map((entry) => entry.value).toList();
+
     if (employee.isEmpty) {
-      return Center(
+      return SizedBox(
+        height: 315,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Reservas por empleados",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(height: 50),
             ElevatedButton(
               onPressed: _showEmployeeSelector,
               child: Text("Seleccionar empleados"),
@@ -119,7 +130,7 @@ class _EmployeeDataState extends State<EmployeeData> {
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(4.0),
                     child: ElevatedButton(
                       onPressed: _showEmployeeSelector,
                       child: Text("Seleccionar empleados"),
@@ -128,7 +139,7 @@ class _EmployeeDataState extends State<EmployeeData> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(4.0),
                     child: ElevatedButton(
                       onPressed: () {
                         setState(() {

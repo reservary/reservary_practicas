@@ -3,15 +3,15 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
-class ServicesData extends StatefulWidget {
+class ServicesGraphicWidget extends StatefulWidget {
   final Statistics stats;
-  const ServicesData({super.key, required this.stats});
+  const ServicesGraphicWidget({super.key, required this.stats});
 
   @override
-  State<ServicesData> createState() => _ServicesDataState();
+  State<ServicesGraphicWidget> createState() => _ServicesGraphicWidgetState();
 }
 
-class _ServicesDataState extends State<ServicesData> {
+class _ServicesGraphicWidgetState extends State<ServicesGraphicWidget> {
   List<String> selectedServices = [];
 
   void _showServicesSelector() async {
@@ -21,44 +21,47 @@ class _ServicesDataState extends State<ServicesData> {
 
     final result = await showDialog<List<String>>(
       context: context,
-      builder: (context) {
+      barrierDismissible: true,
+      builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             return AlertDialog(
-              title: Text("Seleccione los servicios"),
-              content: SingleChildScrollView(
-                child: Column(
-                  children:
-                      servicesNames.map((serv) {
-                        return CheckboxListTile(
-                          title: Text(serv),
-                          value: tempSelected.contains(serv),
-                          onChanged: (bool? checked) {
-                            setStateDialog(() {
-                              if (checked == true) {
-                                tempSelected.add(serv);
-                              } else {
-                                tempSelected.remove(serv);
-                              }
-                            });
-                          },
-                        );
-                      }).toList(),
+              title: const Text("Seleccione los servicios"),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: servicesNames.length,
+                  itemBuilder: (context, index) {
+                    final serv = servicesNames[index];
+                    return CheckboxListTile(
+                      title: Text(serv),
+                      value: tempSelected.contains(serv),
+                      onChanged: (bool? checked) {
+                        setStateDialog(() {
+                          if (checked == true) {
+                            tempSelected.add(serv);
+                          } else {
+                            tempSelected.remove(serv);
+                          }
+                        });
+                      },
+                    );
+                  },
                 ),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text("Cancelar"),
+                  child: const Text("Cancelar"),
                 ),
                 ElevatedButton(
                   onPressed:
-                      tempSelected.isEmpty
-                          ? null
-                          : () {
-                            Navigator.pop(context, tempSelected);
-                          },
-                  child: Text("Aplicar"),
+                      () => Navigator.pop(
+                        context,
+                        List<String>.from(tempSelected),
+                      ),
+                  child: const Text("Aplicar"),
                 ),
               ],
             );
@@ -66,11 +69,18 @@ class _ServicesDataState extends State<ServicesData> {
         );
       },
     );
+
     if (result != null) {
       setState(() {
         selectedServices = result;
       });
     }
+  }
+
+  void _clearSelection() {
+    setState(() {
+      selectedServices = [];
+    });
   }
 
   @override
@@ -88,10 +98,20 @@ class _ServicesDataState extends State<ServicesData> {
           return val.toDouble();
         }).toList();
     if (filteredNames.isEmpty || filteredValues.isEmpty) {
-      return Center(
+      return SizedBox(
+        height: 315,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Reservas por servicios",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(height: 50),
             ElevatedButton(
               onPressed: _showServicesSelector,
               child: Text("Seleccionar servicios"),
@@ -112,22 +132,22 @@ class _ServicesDataState extends State<ServicesData> {
         children: [
           Row(
             children: [
-              // Expanded(
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(8.0),
-              //     child: ElevatedButton(
-              //       onPressed: _showServicesSelector,
-              //       child: Text("Seleccionar servicios"),
-              //     ),
-              //   ),
-              // ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: _showServicesSelector,
+                    child: Text("Seleccionar servicios"),
+                  ),
+                ),
+              ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        selectedServices.clear();
+                        _clearSelection();
                       });
                     },
                     child: Text("Restablecer"),

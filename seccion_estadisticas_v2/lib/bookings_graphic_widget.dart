@@ -4,15 +4,15 @@ import 'package:intl/intl.dart';
 import 'package:seccion_estadisticas_v2/models/progress.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
-class BookingsData extends StatefulWidget {
+class BookingsGraphicWidget extends StatefulWidget {
   final Statistics stats;
-  const BookingsData({super.key, required this.stats});
+  const BookingsGraphicWidget({super.key, required this.stats});
 
   @override
-  State<BookingsData> createState() => _BookingsDataState();
+  State<BookingsGraphicWidget> createState() => _BookingsGraphicWidgetState();
 }
 
-class _BookingsDataState extends State<BookingsData> {
+class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
   DateTime? _startDate;
   DateTime? _endDate;
   final _dateFormat = DateFormat('dd/MM/yyyy');

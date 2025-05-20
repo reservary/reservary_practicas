@@ -2,13 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:seccion_estadisticas_v2/bookings_data.dart';
-import 'package:seccion_estadisticas_v2/general_information.dart';
+import 'package:seccion_estadisticas_v2/bookings_graphic_widget.dart';
+import 'package:seccion_estadisticas_v2/general_information_widget.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
-import 'package:seccion_estadisticas_v2/employee_data.dart';
-import 'package:seccion_estadisticas_v2/platform_data.dart';
-import 'package:seccion_estadisticas_v2/services_data.dart';
-import 'package:seccion_estadisticas_v2/status_data.dart';
+import 'package:seccion_estadisticas_v2/employee_graphic_widget.dart';
+import 'package:seccion_estadisticas_v2/platform_graphic_widget.dart';
+import 'package:seccion_estadisticas_v2/services/statistic_screen_viewmodel.dart';
+import 'package:seccion_estadisticas_v2/services_graphic_widget.dart';
+import 'package:seccion_estadisticas_v2/status_graphic_widget.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -18,25 +19,19 @@ class StatisticsScreen extends StatefulWidget {
 }
 
 class _StatisticsScreen extends State<StatisticsScreen> {
-  Statistics? _stats;
+  final _viewModel=StatisticsScreenViewModel();
 
   @override
   void initState() {
     super.initState();
-    _loadStats();
+    _viewModel.loadStats();
   }
 
-  Future<void> _loadStats() async {
-    final jsonString = await rootBundle.loadString('assets/data/data.json');
-    final jsonMap = jsonDecode(jsonString);
-    setState(() {
-      _stats = Statistics.fromJson(jsonMap);
-    });
-  }
+  
 
   @override
   Widget build(BuildContext context) {
-    bool isSmallScreen = MediaQuery.of(context).size.width < 700;
+    bool isSmallScreen = MediaQuery.of(context).size.width < 1024;
 
     return Scaffold(
       body:
@@ -48,34 +43,113 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                     isSmallScreen
                         ? Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: GeneralInformation(stats: _stats!),
+                            Row(
+                              children: [
+                                Text("Filtros:"),
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  child: Text("Fecha de inicio"),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  child: Text("Fecha de fin"),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  child: Text("Empleado"),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {},
+                                  child: Text("Servicios"),
+                                ),
+                              ],
                             ),
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: BookingsData(stats: _stats!),
+                              child: GeneralInformationWidget(stats: _stats!),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: EmployeeData(stats: _stats!),
+                              child: BookingsGraphicWidget(
+                                stats: _stats!,
+                              ), //TimeProgressWidget GraphicWidget
                             ),
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: PlatformData(stats: _stats!),
+                              child: EmployeeGraphicWidget(stats: _stats!),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: ServicesData(stats: _stats!),
+                              child: PlatformGraphicWidget(stats: _stats!),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(24.0),
-                              child: StatusData(stats: _stats!),
+                              child: ServicesGraphicWidget(stats: _stats!),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: StatusGraphicWidget(stats: _stats!),
                             ),
                           ],
                         )
                         : Column(
                           children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: Text("Filtros:"),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 24,
+                                    bottom: 24,
+                                    left: 24,
+                                    right: 12,
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    child: Text("Fecha inicial"),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 24,
+                                    bottom: 24,
+                                    left: 24,
+                                    right: 12,
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    child: Text("Fecha final"),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 24,
+                                    bottom: 24,
+                                    left: 24,
+                                    right: 12,
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    child: Text("Empleado"),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 24,
+                                    bottom: 24,
+                                    left: 24,
+                                    right: 12,
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    child: Text("Servicios"),
+                                  ),
+                                ),
+                              ],
+                            ),
                             Row(
                               children: [
                                 Expanded(
@@ -86,7 +160,9 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                                       right: 12,
                                       bottom: 12,
                                     ),
-                                    child: GeneralInformation(stats: _stats!),
+                                    child: GeneralInformationWidget(
+                                      stats: _stats!,
+                                    ),
                                   ),
                                 ),
                                 Expanded(
@@ -97,7 +173,9 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                                       right: 12,
                                       bottom: 12,
                                     ),
-                                    child: BookingsData(stats: _stats!),
+                                    child: BookingsGraphicWidget(
+                                      stats: _stats!,
+                                    ),
                                   ),
                                 ),
                                 Expanded(
@@ -108,7 +186,9 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                                       right: 24,
                                       bottom: 12,
                                     ),
-                                    child: EmployeeData(stats: _stats!),
+                                    child: EmployeeGraphicWidget(
+                                      stats: _stats!,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -123,7 +203,9 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                                       right: 12,
                                       bottom: 24,
                                     ),
-                                    child: PlatformData(stats: _stats!),
+                                    child: PlatformGraphicWidget(
+                                      stats: _stats!,
+                                    ),
                                   ),
                                 ),
                                 Expanded(
@@ -134,7 +216,9 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                                       right: 12,
                                       bottom: 24,
                                     ),
-                                    child: ServicesData(stats: _stats!),
+                                    child: ServicesGraphicWidget(
+                                      stats: _stats!,
+                                    ),
                                   ),
                                 ),
                                 Expanded(
@@ -145,7 +229,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                                       right: 24,
                                       bottom: 24,
                                     ),
-                                    child: StatusData(stats: _stats!),
+                                    child: StatusGraphicWidget(stats: _stats!),
                                   ),
                                 ),
                               ],
