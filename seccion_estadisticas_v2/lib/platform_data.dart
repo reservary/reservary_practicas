@@ -46,7 +46,7 @@ class _PlatformDataState extends State<PlatformData> {
                 value: numBookings[index].toDouble(),
                 title: isTouched == index ? "${numBookings[index]}" : "",
                 color: _getColorPerPlatform(namePlatform[index]),
-                radius: isTouched == index ? 75 : 70,
+                radius: isTouched == index ? 68 : 65,
                 borderSide: BorderSide(width: isTouched == index ? 3 : 0),
                 badgeWidget: Container(
                   width: isTouched == index ? 75 : 0,

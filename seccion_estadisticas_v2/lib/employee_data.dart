@@ -98,7 +98,7 @@ class _EmployeeDataState extends State<EmployeeData> {
           children: [
             ElevatedButton(
               onPressed: _showEmployeeSelector,
-              child: Text("Seleccionar Empleados"),
+              child: Text("Seleccionar empleados"),
             ),
             SizedBox(height: 16),
             Text(

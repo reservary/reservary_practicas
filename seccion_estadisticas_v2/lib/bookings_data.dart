@@ -1,5 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:seccion_estadisticas_v2/models/progress.dart';
 import 'package:seccion_estadisticas_v2/models/statistics.dart';
 
 class BookingsData extends StatefulWidget {
@@ -11,16 +13,31 @@ class BookingsData extends StatefulWidget {
 }
 
 class _BookingsDataState extends State<BookingsData> {
-  DateTimeRange? _selectedRange;
   DateTime? _startDate;
   DateTime? _endDate;
+  final _dateFormat = DateFormat('dd/MM/yyyy');
+  List<Progress> _filteredProgress = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredProgress = List.from(
+      widget.stats.progress,
+    )..sort((a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)));
+  }
 
   Future<void> _selectDateRange(BuildContext context) async {
     final DateTimeRange? selectedRange = await showDateRangePicker(
       context: context,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
-      initialDateRange: DateTimeRange(start: DateTime(2025,01,01), end: DateTime.now()),
+      initialDateRange:
+          _startDate != null && _endDate != null
+              ? DateTimeRange(start: _startDate!, end: _endDate!)
+              : DateTimeRange(
+                start: DateTime(2025, 01, 01),
+                end: DateTime.now(),
+              ),
       initialEntryMode: DatePickerEntryMode.input,
       helpText: "Selecciona el rango",
       locale: Locale("es", "ES"),
@@ -29,17 +46,45 @@ class _BookingsDataState extends State<BookingsData> {
       setState(() {
         _startDate = selectedRange.start;
         _endDate = selectedRange.end;
+        _filteredProgress = _getFilteredProgress();
       });
     }
   }
 
+  String _formatDate(DateTime date) {
+    return _dateFormat.format(date);
+  }
+
+  String _formatDateFromString(String dateStr) {
+    final date = DateTime.parse(dateStr);
+    return _formatDate(date);
+  }
+
+  List<Progress> _getFilteredProgress() {
+    if (_startDate == null || _endDate == null) {
+      return List.from(widget.stats.progress)..sort(
+        (a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)),
+      );
+    }
+
+    return widget.stats.progress.where((p) {
+        final filteredDates = DateTime.parse(p.date);
+        return filteredDates.isAfter(_startDate!.subtract(Duration(days: 1))) &&
+            filteredDates.isBefore(_endDate!.add(Duration(days: 1)));
+      }).toList()
+      ..sort(
+        (a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final progress = widget.stats.progress;
-    final spots = List<FlSpot>.generate(progress.length, (index) {
-      return FlSpot(index.toDouble(), progress[index].bookings.toDouble());
+    final spots = List<FlSpot>.generate(_filteredProgress.length, (index) {
+      return FlSpot(
+        index.toDouble(),
+        _filteredProgress[index].bookings.toDouble(),
+      );
     });
-    final dates = progress.map((p) => p.date).toList();
     return SizedBox(
       height: 315,
       child: Column(
@@ -76,7 +121,7 @@ class _BookingsDataState extends State<BookingsData> {
                         getTooltipItems: (touchedSpots) {
                           return touchedSpots.map((LineBarSpot touchedSpot) {
                             final index = touchedSpot.x.toInt();
-                            final entry = progress[index];
+                            final entry = _filteredProgress[index];
                             return LineTooltipItem(
                               "Billed amount: ${entry.billedAmount}€",
                               TextStyle(color: Colors.white),
@@ -111,11 +156,14 @@ class _BookingsDataState extends State<BookingsData> {
                           interval: 1,
                           getTitlesWidget: (value, meta) {
                             final index = value.toInt();
-                            if (index >= 0 && index < dates.length) {
+                            if (index >= 0 &&
+                                index < _filteredProgress.length) {
                               return Padding(
                                 padding: const EdgeInsets.only(top: 5),
                                 child: Text(
-                                  dates[index],
+                                  _formatDateFromString(
+                                    _filteredProgress[index].date,
+                                  ),
                                   style: TextStyle(fontSize: 12),
                                   overflow: TextOverflow.ellipsis,
                                 ),
