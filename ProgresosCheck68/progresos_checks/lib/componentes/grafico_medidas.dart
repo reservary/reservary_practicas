@@ -24,8 +24,9 @@ class GraficoMedidas extends StatelessWidget {
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
+        Expanded(  // Expande verticalmente el gráfico para ocupar espacio disponible
           child: LayoutBuilder(
             builder: (context, constraints) {
               double chartWidth = checks.length * 150;
@@ -50,10 +51,15 @@ class GraficoMedidas extends StatelessWidget {
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Wrap(
-            spacing: 12,
-            runSpacing: 8,
-            children: _buildLeyenda(),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Wrap(
+              alignment: WrapAlignment.start,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 12,
+              runSpacing: 8,
+              children: _buildLeyenda(),
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -64,11 +70,39 @@ class GraficoMedidas extends StatelessWidget {
   LineChartData _buildChartData() {
     return LineChartData(
       lineTouchData: LineTouchData(
+        enabled: true,
         handleBuiltInTouches: true,
+        getTouchedSpotIndicator: (barData, spotIndexes) {
+          return spotIndexes.map((index) {
+            return TouchedSpotIndicatorData(
+              FlLine(color: Colors.black.withOpacity(0.3), strokeWidth: 1),
+              FlDotData(
+                show: true,
+                getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+                  radius: 5,
+                  color: barData.color ?? Colors.blue,
+                  strokeWidth: 2,
+                  strokeColor: Colors.white,
+                ),
+              ),
+            );
+          }).toList();
+        },
         touchTooltipData: LineTouchTooltipData(
           tooltipRoundedRadius: 8,
           tooltipPadding: const EdgeInsets.all(8),
-          tooltipBorder: BorderSide.none,
+          tooltipBorder: BorderSide(color: Colors.black12),
+          getTooltipItems: (touchedSpots) {
+            return touchedSpots.map((spot) {
+              return LineTooltipItem(
+                '${spot.bar.color != null ? '' : ''}${spot.y.toStringAsFixed(1)} cm',
+                const TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            }).toList();
+          },
         ),
       ),
       gridData: const FlGridData(show: false),
@@ -105,9 +139,10 @@ class GraficoMedidas extends StatelessWidget {
             getTitlesWidget: (double value, TitleMeta meta) {
               return SideTitleWidget(
                 meta: meta,
+                space: 12,
                 child: Text(
                   '${value.toInt()} cm',
-                  style: const TextStyle(fontSize: 15),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600), // fuente más pequeña
                 ),
               );
             },
@@ -141,7 +176,6 @@ class GraficoMedidas extends StatelessWidget {
       Colors.green,
       Colors.teal,
       Colors.blue,
-      Colors.brown,
     ];
 
     return medidasSeleccionadas.asMap().entries.map((entry) {
@@ -188,16 +222,16 @@ class GraficoMedidas extends StatelessWidget {
 
   double _getRoundedMaxY() {
     final allValues = checks.expand((c) => [
-      double.tryParse(c.checkWeight) ?? 0.0,
-      double.tryParse(c.checkNeck) ?? 0.0,
-      double.tryParse(c.checkChest) ?? 0.0,
-      double.tryParse(c.checkBiceps) ?? 0.0,
-      double.tryParse(c.checkForearm) ?? 0.0,
-      double.tryParse(c.checkWaist) ?? 0.0,
-      double.tryParse(c.checkHip) ?? 0.0,
-      double.tryParse(c.checkThigh) ?? 0.0,
-      double.tryParse(c.checkCalf) ?? 0.0,
-    ]);
+          double.tryParse(c.checkWeight) ?? 0.0,
+          double.tryParse(c.checkNeck) ?? 0.0,
+          double.tryParse(c.checkChest) ?? 0.0,
+          double.tryParse(c.checkBiceps) ?? 0.0,
+          double.tryParse(c.checkForearm) ?? 0.0,
+          double.tryParse(c.checkWaist) ?? 0.0,
+          double.tryParse(c.checkHip) ?? 0.0,
+          double.tryParse(c.checkThigh) ?? 0.0,
+          double.tryParse(c.checkCalf) ?? 0.0,
+        ]);
     final maxValue = allValues.isEmpty ? 10 : allValues.reduce((a, b) => a > b ? a : b);
     return ((maxValue + 5) / 5).ceil() * 5;
   }
@@ -217,9 +251,9 @@ class GraficoMedidas extends StatelessWidget {
       spots: spots,
       isCurved: true,
       color: color,
-      barWidth: 4,
+      barWidth: 8, // líneas más gruesas
       isStrokeCapRound: true,
-      dotData: const FlDotData(show: true),
+      dotData: const FlDotData(show: false),
       belowBarData: BarAreaData(show: false),
     );
   }
@@ -234,7 +268,6 @@ class GraficoMedidas extends StatelessWidget {
       Colors.green,
       Colors.teal,
       Colors.blue,
-      Colors.brown,
     ];
 
     return medidasSeleccionadas.asMap().entries.map((entry) {
@@ -254,6 +287,7 @@ class GraficoMedidas extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(medida),
+          const SizedBox(width: 12),
         ],
       );
     }).toList();
