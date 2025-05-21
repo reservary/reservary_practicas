@@ -1,7 +1,7 @@
 {
    "initDate":"01/01/2025",
    "endDate":"31/01/2025",
-   "employeeId":13 ,
+   "employeeId":13,
    "serviceId":1,
    "totalBookings":250,
    "totalBilledAmount":3500.0,

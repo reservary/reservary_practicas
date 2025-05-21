@@ -13,9 +13,6 @@ class BookingsGraphicWidget extends StatefulWidget {
 }
 
 class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
-  DateTime? _startDate;
-  DateTime? _endDate;
-  final _dateFormat = DateFormat('dd/MM/yyyy');
   List<Progress> _filteredProgress = [];
 
   @override
@@ -26,56 +23,24 @@ class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
     )..sort((a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)));
   }
 
-  Future<void> _selectDateRange(BuildContext context) async {
-    final DateTimeRange? selectedRange = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-      initialDateRange:
-          _startDate != null && _endDate != null
-              ? DateTimeRange(start: _startDate!, end: _endDate!)
-              : DateTimeRange(
-                start: DateTime(2025, 01, 01),
-                end: DateTime.now(),
-              ),
-      initialEntryMode: DatePickerEntryMode.input,
-      helpText: "Selecciona el rango",
-      locale: Locale("es", "ES"),
-    );
-    if (selectedRange != null) {
-      setState(() {
-        _startDate = selectedRange.start;
-        _endDate = selectedRange.end;
-        _filteredProgress = _getFilteredProgress();
-      });
-    }
-  }
+  // 
 
-  String _formatDate(DateTime date) {
-    return _dateFormat.format(date);
-  }
+  // List<Progress> _getFilteredProgress() {
+  //   if (_startDate == null || _endDate == null) {
+  //     return List.from(widget.stats.progress)..sort(
+  //       (a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)),
+  //     );
+  //   }
 
-  String _formatDateFromString(String dateStr) {
-    final date = DateTime.parse(dateStr);
-    return _formatDate(date);
-  }
-
-  List<Progress> _getFilteredProgress() {
-    if (_startDate == null || _endDate == null) {
-      return List.from(widget.stats.progress)..sort(
-        (a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)),
-      );
-    }
-
-    return widget.stats.progress.where((p) {
-        final filteredDates = DateTime.parse(p.date);
-        return filteredDates.isAfter(_startDate!.subtract(Duration(days: 1))) &&
-            filteredDates.isBefore(_endDate!.add(Duration(days: 1)));
-      }).toList()
-      ..sort(
-        (a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)),
-      );
-  }
+  //   return widget.stats.progress.where((p) {
+  //       final filteredDates = DateTime.parse(p.date);
+  //       return filteredDates.isAfter(_startDate!.subtract(Duration(days: 1))) &&
+  //           filteredDates.isBefore(_endDate!.add(Duration(days: 1)));
+  //     }).toList()
+  //     ..sort(
+  //       (a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)),
+  //     );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -89,22 +54,10 @@ class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
       height: 315,
       child: Column(
         children: [
-          SizedBox(
-            child: SizedBox(
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: IconButton(
-                      onPressed: () => _selectDateRange(context),
-                      icon: Icon(Icons.filter_alt),
-                      tooltip: "Filtrar",
-                    ),
-                  ),
+          SizedBox(child: SizedBox(child: Row(children: [
+                  
                 ],
-              ),
-            ),
-          ),
+              ))),
           Expanded(
             child: SizedBox(
               child: Padding(
@@ -160,13 +113,13 @@ class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
                                 index < _filteredProgress.length) {
                               return Padding(
                                 padding: const EdgeInsets.only(top: 5),
-                                child: Text(
-                                  _formatDateFromString(
-                                    _filteredProgress[index].date,
-                                  ),
-                                  style: TextStyle(fontSize: 12),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                // child: Text(
+                                //   _formatDateFromString(
+                                //     _filteredProgress[index].date,
+                                //   ),
+                                //   style: TextStyle(fontSize: 12),
+                                //   overflow: TextOverflow.ellipsis,
+                                // ),
                               );
                             }
                             return Text("");
