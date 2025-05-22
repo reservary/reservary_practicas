@@ -1,10 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:seccion_estadisticas_v2/models/statistics.dart';
+import 'package:seccion_estadisticas_v2/services/statistic_screen_viewmodel.dart';
 
 class PlatformGraphicWidget extends StatefulWidget {
-  final Statistics stats;
-  const PlatformGraphicWidget({super.key, required this.stats});
+  final StatisticsScreenViewModel viewModel;
+  const PlatformGraphicWidget({super.key, required this.viewModel});
 
   @override
   State<PlatformGraphicWidget> createState() => _PlatformGraphicWidgetState();
@@ -15,79 +15,82 @@ class _PlatformGraphicWidgetState extends State<PlatformGraphicWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final totalBookingsPerPlatform = widget.stats.totalBookingsPerPlatform;
+    final totalBookingsPerPlatform = widget.viewModel.totalBookingsPerPlatform;
     final List<String> namePlatform = totalBookingsPerPlatform.keys.toList();
     final List<int> numBookings = totalBookingsPerPlatform.values.toList();
-    return SizedBox(
-      height: 315,
-      child: Column(
-        children: [
-          Text(
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 16,left: 16,right: 16,bottom: 8),
+          child: Text(
             "Reservas por plataforma",
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            overflow: TextOverflow.ellipsis,
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: PieChart(
-                PieChartData(
-                  centerSpaceRadius: 55,
-                  pieTouchData: PieTouchData(
-                    touchCallback: (
-                      FlTouchEvent event,
-                      PieTouchResponse? pieTouchResponse,
-                    ) {
-                      setState(() {
-                        if (!event.isInterestedForInteractions ||
-                            pieTouchResponse == null ||
-                            pieTouchResponse.touchedSection == null) {
-                          return;
-                        }
-                        isTouched =
-                            pieTouchResponse.touchedSection!.touchedSectionIndex;
-                      });
-                    },
-                  ),
-                  sections: List.generate(numBookings.length, (index) {
-                    return PieChartSectionData(
-                      value: numBookings[index].toDouble(),
-                      title: isTouched == index ? "${numBookings[index]}" : "",
-                      color: _getColorPerPlatform(namePlatform[index]),
-                      radius: isTouched == index ? 60 : 50,
-                      borderSide: BorderSide(width: isTouched == index ? 3 : 0),
-                      badgeWidget: Container(
-                        width: isTouched == index ? 65 : 0,
-                        height: isTouched == index ? 65 : 0,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(width: isTouched == index ? 2 : 0),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              _getStringPerPlatform(namePlatform[index]),
-                              style: TextStyle(
-                                fontSize: isTouched == index ? 11 : 0,
-                                fontWeight:
-                                    isTouched == index
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      badgePositionPercentageOffset: 1.5,
-                    );
-                  }),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8,left: 16,right: 16,bottom: 16),
+            child: PieChart(
+              PieChartData(
+                centerSpaceRadius: 55,
+                pieTouchData: PieTouchData(
+                  touchCallback: (
+                    FlTouchEvent event,
+                    PieTouchResponse? pieTouchResponse,
+                  ) {
+                    setState(() {
+                      if (!event.isInterestedForInteractions ||
+                          pieTouchResponse == null ||
+                          pieTouchResponse.touchedSection == null) {
+                        return;
+                      }
+                      isTouched =
+                          pieTouchResponse
+                              .touchedSection!
+                              .touchedSectionIndex;
+                    });
+                  },
                 ),
+                sections: List.generate(numBookings.length, (index) {
+                  return PieChartSectionData(
+                    value: numBookings[index].toDouble(),
+                    title: isTouched == index ? "${numBookings[index]}" : "",
+                    color: _getColorPerPlatform(namePlatform[index]),
+                    radius: isTouched == index ? 60 : 50,
+                    borderSide: BorderSide(width: isTouched == index ? 3 : 0),
+                    badgeWidget: Container(
+                      width: isTouched == index ? 65 : 0,
+                      height: isTouched == index ? 65 : 0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(width: isTouched == index ? 2 : 0),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            _getStringPerPlatform(namePlatform[index]),
+                            style: TextStyle(
+                              fontSize: isTouched == index ? 11 : 0,
+                              fontWeight:
+                                  isTouched == index
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    badgePositionPercentageOffset: 1.5,
+                  );
+                }),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

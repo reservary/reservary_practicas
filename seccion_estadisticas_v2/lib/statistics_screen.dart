@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:seccion_estadisticas_v2/bookings_graphic_widget.dart';
 import 'package:seccion_estadisticas_v2/general_information_widget.dart';
-import 'package:seccion_estadisticas_v2/models/statistics.dart';
 import 'package:seccion_estadisticas_v2/employee_graphic_widget.dart';
 import 'package:seccion_estadisticas_v2/platform_graphic_widget.dart';
 import 'package:seccion_estadisticas_v2/services/statistic_screen_viewmodel.dart';
@@ -13,7 +9,8 @@ import 'package:seccion_estadisticas_v2/services_graphic_widget.dart';
 import 'package:seccion_estadisticas_v2/status_graphic_widget.dart';
 
 class StatisticsScreen extends StatefulWidget {
-  const StatisticsScreen({super.key});
+  final StatisticsScreenViewModel viewModel;
+  const StatisticsScreen({super.key, required this.viewModel});
 
   @override
   State<StatisticsScreen> createState() => _StatisticsScreen();
@@ -23,7 +20,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
   DateTime? _startDate;
   DateTime? _endDate;
   final _dateFormat = DateFormat('dd/MM/yyyy');
-  final _viewModel = StatisticsScreenViewModel();
+
   Future<void> _selectDateRange(BuildContext context) async {
     final DateTimeRange? selectedRange = await showDateRangePicker(
       context: context,
@@ -51,7 +48,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
   @override
   void initState() {
     super.initState();
-    //_viewModel.loadStats();
+    widget.viewModel.loadStats();
   }
 
   @override
@@ -59,104 +56,126 @@ class _StatisticsScreen extends State<StatisticsScreen> {
     bool isSmallScreen = MediaQuery.of(context).size.width < 1024;
 
     return Scaffold(
-      body:
-      //_viewModel.stats == null
-      // ? const Center(child: CircularProgressIndicator())
-      // : SingleChildScrollView(
-      Column(
-        children: [
-          isSmallScreen
-              ? Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      top: 24,
-                      bottom: 24,
-                      left: 24,
-                      right: 12,
+      body: ListenableBuilder(
+        listenable: widget.viewModel,
+        builder: (context, _) {
+          final originalStats = widget.viewModel.originalStats;
+
+          if (originalStats == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return isSmallScreen
+              ? SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text("Filtros:"),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 24,
+                            bottom: 24,
+                            left: 24,
+                            right: 6,
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _selectDateRange(context);
+                            },
+                            child: Text("Fechas"),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 24,
+                            bottom: 24,
+                            left: 6,
+                            right: 6,
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            child: Text("Empleado"),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 24,
+                            bottom: 24,
+                            left: 6,
+                            right: 24,
+                          ),
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            child: Text("Servicios"),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: Text("Filtros:"),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 24,
-                          bottom: 8,
-                          left: 12,
-                          right: 24,
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 400, // 30% de la altura de la pantalla
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: GeneralInformationWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
                         ),
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child: Text("Rango de fechas"),
+                        SizedBox(
+                          height: 400,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: BookingsGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8,
-                          bottom: 8,
-                          left: 12,
-                          right: 24,
+                        SizedBox(
+                          height: 400,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: EmployeeGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
                         ),
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child: Text("Empleado"),
+                        SizedBox(
+                          height: 400,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: PlatformGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8,
-                          bottom: 24,
-                          left: 12,
-                          right: 24,
+                        SizedBox(
+                          height: 400,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: ServicesGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
                         ),
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          child: Text("Servicios"),
+                        SizedBox(
+                          height: 400,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: StatusGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               )
-              // Padding(
-              //   padding: const EdgeInsets.all(24.0),
-              //   child: GeneralInformationWidget(
-              //     stats: _viewModel.stats!,
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.all(24.0),
-              //   child: BookingsGraphicWidget(
-              //     stats: _viewModel.stats!,
-              //   ), //TimeProgressWidget GraphicWidget
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.all(24.0),
-              //   child: EmployeeGraphicWidget(
-              //     stats: _viewModel.stats!,
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.all(24.0),
-              //   child: PlatformGraphicWidget(
-              //     stats: _viewModel.stats!,
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.all(24.0),
-              //   child: ServicesGraphicWidget(
-              //     stats: _viewModel.stats!,
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.all(24.0),
-              //   child: StatusGraphicWidget(
-              //     stats: _viewModel.stats!,
-              //   ),
-              // ),
               : Column(
                 children: [
                   Row(
@@ -179,7 +198,6 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                           child: Text("Fechas"),
                         ),
                       ),
-
                       Padding(
                         padding: const EdgeInsets.only(
                           top: 24,
@@ -206,95 +224,102 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      // Expanded(
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.only(
-                      //       top: 24,
-                      //       left: 24,
-                      //       right: 12,
-                      //       bottom: 12,
-                      //     ),
-                      //     child: GeneralInformationWidget(
-                      //       stats: _viewModel.stats!,
-                      //     ),
-                      //   ),
-                      // ),
-                      // Expanded(
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.only(
-                      //       top: 24,
-                      //       left: 12,
-                      //       right: 12,
-                      //       bottom: 12,
-                      //     ),
-                      //     child: BookingsGraphicWidget(
-                      //       stats: _viewModel.stats!,
-                      //     ),
-                      //   ),
-                      // ),
-                      // Expanded(
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.only(
-                      //       top: 24,
-                      //       left: 12,
-                      //       right: 24,
-                      //       bottom: 12,
-                      //     ),
-                      //     child: EmployeeGraphicWidget(
-                      //       stats: _viewModel.stats!,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 24,
+                              left: 24,
+                              right: 12,
+                              bottom: 12,
+                            ),
+                            child: GeneralInformationWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 24,
+                              left: 12,
+                              right: 12,
+                              bottom: 12,
+                            ),
+                            child: BookingsGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 24,
+                              left: 12,
+                              right: 24,
+                              bottom: 12,
+                            ),
+                            child: SizedBox(
+                              height: 300,
+                              child: EmployeeGraphicWidget(
+                                viewModel: widget.viewModel,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  Row(
-                    children: [
-                      // Expanded(
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.only(
-                      //       top: 12,
-                      //       left: 24,
-                      //       right: 12,
-                      //       bottom: 24,
-                      //     ),
-                      //     child: PlatformGraphicWidget(
-                      //       stats: _viewModel.stats!,
-                      //     ),
-                      //   ),
-                      // ),
-                      // Expanded(
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.only(
-                      //       top: 12,
-                      //       left: 12,
-                      //       right: 12,
-                      //       bottom: 24,
-                      //     ),
-                      //     child: ServicesGraphicWidget(
-                      //       stats: _viewModel.stats!,
-                      //     ),
-                      //   ),
-                      // ),
-                      // Expanded(
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.only(
-                      //       top: 12,
-                      //       left: 12,
-                      //       right: 24,
-                      //       bottom: 24,
-                      //     ),
-                      //     child: StatusGraphicWidget(
-                      //       stats: _viewModel.stats!,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 12,
+                              left: 24,
+                              right: 12,
+                              bottom: 24,
+                            ),
+                            child: PlatformGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 12,
+                              left: 12,
+                              right: 12,
+                              bottom: 24,
+                            ),
+                            child: ServicesGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 12,
+                              left: 12,
+                              right: 24,
+                              bottom: 24,
+                            ),
+                            child: StatusGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
-              ),
-        ],
+              );
+        },
       ),
     );
   }

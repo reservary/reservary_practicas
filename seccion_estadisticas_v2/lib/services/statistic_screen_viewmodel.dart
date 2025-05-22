@@ -9,16 +9,17 @@ class StatisticsScreenViewModel extends ChangeNotifier {
   Statistics? _originalStats;
   Statistics? _filteredStats;
 
-  Statistics? get stats => _filteredStats;
-
-  bool _isLoading = false;
-  bool get isLoading => _isLoading;
-
   DateTime? _initDate;
   DateTime? _endDate;
   final _dateFormat = DateFormat('dd/MM/yyyy');
   int? _employeeId;
   int? _servicesId;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  Statistics? get originalStats => _originalStats;
+  Statistics? get filteredStats => _filteredStats;
 
   Future<void> loadStats() async {
     try {
@@ -37,11 +38,31 @@ class StatisticsScreenViewModel extends ChangeNotifier {
     }
   }
 
+  Map<String, int> get totalBookingsPerPlatform {
+    if (_originalStats == null) return {};
+    return _originalStats!.totalBookingsPerPlatform;
+  }
+
+  Map<String, int> get totalBookingsPerEmployee {
+    if (_originalStats == null) return {};
+    return _originalStats!.totalBookingsPerEmployee;
+  }
+
+  Map<String, int> get totalBookingsPerService {
+    if (_originalStats == null) return {};
+    return _originalStats!.totalBookingsPerService;
+  }
+
+  Map<String, int> get totalBookingsByStatus {
+    if (_originalStats == null) return {};
+    return _originalStats!.totalBookingsByStatus;
+  }
+
   String _formatDate(DateTime date) {
     return _dateFormat.format(date);
   }
 
-  String _formatDateFromString(String dateStr) {
+  String formatDateFromString(String dateStr) {
     final date = DateTime.parse(dateStr);
     return _formatDate(date);
   }

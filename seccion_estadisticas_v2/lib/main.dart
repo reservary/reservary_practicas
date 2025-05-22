@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:seccion_estadisticas_v2/services/statistic_screen_viewmodel.dart';
 import 'package:seccion_estadisticas_v2/statistics_screen.dart';
 
 void main() {
@@ -11,8 +12,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: StatisticsScreen(),
+    return MaterialApp(
+      home: StatisticsScreen(viewModel: StatisticsScreenViewModel()),
       supportedLocales: [Locale('es', 'US'), Locale('es', 'ES')],
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
