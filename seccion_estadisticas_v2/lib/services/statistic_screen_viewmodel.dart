@@ -14,6 +14,8 @@ class StatisticsScreenViewModel extends ChangeNotifier {
   final _dateFormat = DateFormat('dd/MM/yyyy');
   int? _employeeId;
   int? _servicesId;
+  String? _selectedEmployeeId;
+  String? get selectedEmployeeId => _selectedEmployeeId;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -77,37 +79,84 @@ class StatisticsScreenViewModel extends ChangeNotifier {
     return progress;
   }
 
-  // List<Progress> filteredByServices(int serviceId) {
-  //   if (_originalStats == null || serviceId == 0) {
-  //     _filteredStats = _originalStats;
-  //   } else {
-  //     if (_originalStats!.serviceId == serviceId) {
-  //       _filteredStats = Statistics(
-  //         totalBookings: _originalStats!.totalBookings,
-  //         totalBilledAmount: _originalStats!.totalBilledAmount,
-  //         employeeId: _originalStats!.employeeId,
-  //         serviceId: serviceId,
-  //         progress: _originalStats!.progress,
-  //         totalBookingsPerEmployee: _originalStats!.totalBookingsPerEmployee,
-  //         totalBookingsByStatus: _originalStats!.totalBookingsByStatus,
-  //         totalBookingsPerService: _originalStats!.totalBookingsPerService,
-  //         totalBookingsPerPlatform: _originalStats!.totalBookingsPerPlatform,
-  //       );
-  //     } else {
-  //       _filteredStats = Statistics(
-  //         totalBookings: _originalStats!.totalBookings,
-  //         totalBilledAmount: _originalStats!.totalBilledAmount,
-  //         employeeId: _originalStats!.employeeId,
-  //         serviceId: serviceId,
-  //         progress: _originalStats!.progress,
-  //         totalBookingsPerEmployee: _originalStats!.totalBookingsPerEmployee,
-  //         totalBookingsByStatus: _originalStats!.totalBookingsByStatus,
-  //         totalBookingsPerService: _originalStats!.totalBookingsPerService,
-  //         totalBookingsPerPlatform: _originalStats!.totalBookingsPerPlatform,
-  //       );
-  //     }
-  //   }
+  void selectEmployee(String? employeeId) {
+    _selectedEmployeeId = employeeId;
+    notifyListeners();
+  }
 
-  //   notifyListeners();
-  // }
+  Statistics filteredByServices(int serviceId) {
+    if (_originalStats == null) {
+      return Statistics(
+        totalBookings: 0,
+        totalBilledAmount: 0,
+        employeeId: 0,
+        serviceId: 0,
+        progress: [],
+        totalBookingsPerEmployee: {},
+        totalBookingsByStatus: {},
+        totalBookingsPerService: {},
+        totalBookingsPerPlatform: {},
+      );
+    }
+
+    if (serviceId == 0) {
+      _filteredStats = _originalStats;
+      notifyListeners();
+      return _filteredStats!;
+    }
+    List<Progress> filteredProgress =
+        _originalStats!.progress
+            .where((p) => _originalStats!.serviceId == serviceId)
+            .toList();
+    _filteredStats = Statistics(
+      totalBookings: _originalStats!.totalBookings,
+      totalBilledAmount: _originalStats!.totalBilledAmount,
+      employeeId: _originalStats!.employeeId,
+      serviceId: serviceId,
+      progress: filteredProgress,
+      totalBookingsPerEmployee: _originalStats!.totalBookingsPerEmployee,
+      totalBookingsByStatus: _originalStats!.totalBookingsByStatus,
+      totalBookingsPerService: _originalStats!.totalBookingsPerService,
+      totalBookingsPerPlatform: _originalStats!.totalBookingsPerPlatform,
+    );
+    notifyListeners();
+    return _filteredStats!;
+  }
+
+  Statistics filteredEmployee(String? employeeId) {
+    if (_originalStats == null) {
+      return Statistics(
+        totalBookings: 0,
+        totalBilledAmount: 0,
+        employeeId: 0,
+        serviceId: 0,
+        progress: [],
+        totalBookingsPerEmployee: {},
+        totalBookingsByStatus: {},
+        totalBookingsPerService: {},
+        totalBookingsPerPlatform: {},
+      );
+    }
+    if (employeeId == null) {
+      _filteredStats = _originalStats;
+      _selectedEmployeeId = null;
+      notifyListeners();
+      return _filteredStats!;
+    }
+
+    _filteredStats = Statistics(
+      totalBookings: _originalStats!.totalBookings,
+      totalBilledAmount: _originalStats!.totalBilledAmount,
+      employeeId: _originalStats!.employeeId,
+      serviceId: _originalStats!.serviceId,
+      progress: _originalStats!.progress,
+      totalBookingsPerEmployee: _originalStats!.totalBookingsPerEmployee,
+      totalBookingsByStatus: _originalStats!.totalBookingsByStatus,
+      totalBookingsPerService: _originalStats!.totalBookingsPerService,
+      totalBookingsPerPlatform: _originalStats!.totalBookingsPerPlatform,
+    );
+    _selectedEmployeeId=employeeId;
+    notifyListeners();
+    return _filteredStats!;
+  }
 }

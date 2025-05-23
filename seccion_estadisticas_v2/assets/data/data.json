@@ -1,7 +1,7 @@
 {
    "initDate":"01/01/2025",
    "endDate":"31/01/2025",
-   "employeeId":1,
+   "employeeId":123456,
    "serviceId":1,
    "totalBookings":250,
    "totalBilledAmount":3500.0,
@@ -54,10 +54,10 @@
        "cancelled":20
     },
     "totalBookingsPerService":{
-       "Corte":100,
-       "Barba":75,
-       "lavado":50,
-       "Tinte":25,
-       "degradado":20
+       "1":100,
+       "2":75,
+       "3":50,
+       "4":25,
+       "5":20
     }
 }

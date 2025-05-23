@@ -17,9 +17,12 @@ class StatisticsScreen extends StatefulWidget {
 }
 
 class _StatisticsScreen extends State<StatisticsScreen> {
+  List<String> selectedEmployees = [];
+  List<String> selectedEServices = [];
   DateTime? _startDate;
   DateTime? _endDate;
   final _dateFormat = DateFormat('dd/MM/yyyy');
+  String? employeeId;
 
   Future<void> _selectDateRange(BuildContext context) async {
     final DateTimeRange? selectedRange = await showDateRangePicker(
@@ -41,6 +44,132 @@ class _StatisticsScreen extends State<StatisticsScreen> {
       setState(() {
         _startDate = selectedRange.start;
         _endDate = selectedRange.end;
+      });
+    }
+  }
+
+  void _showEmployeeSelector() async {
+    final List<String> employees =
+        widget.viewModel.totalBookingsPerEmployee.keys.toList();
+    final tempSelected = List<String>.from(selectedEmployees);
+    final result = await showDialog<List<String>>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: Text("Seleccione empleados"),
+              content: SingleChildScrollView(
+                child: Column(
+                  children:
+                      employees.map((emp) {
+                        return CheckboxListTile(
+                          title: Text(emp),
+                          value: tempSelected.contains(emp),
+                          onChanged: (bool? checked) {
+                            setStateDialog(() {
+                              if (checked == true) {
+                                tempSelected.add(emp);
+                              } else {
+                                tempSelected.remove(emp);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Cancelar"),
+                ),
+                ElevatedButton(
+                  onPressed:
+                      tempSelected.isEmpty
+                          ? null
+                          : () {
+                            Navigator.pop(context, tempSelected);
+                          },
+                  child: Text("Aplicar"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    if (result != null) {
+      setState(() {
+        selectedEmployees = result;
+        if(result.isEmpty){
+          widget.viewModel.filteredEmployee(null);
+        }else{
+          widget.viewModel.filteredEmployee(result.first);
+        }
+      });
+    }
+  }
+
+  void _showServiceSelector() async {
+    final List<String> services =
+        widget.viewModel.totalBookingsPerService.keys.toList();
+    final tempSelected = List<String>.from(selectedEServices);
+    final result = await showDialog<List<String>>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: Text("Seleccione los servicios"),
+              content: SingleChildScrollView(
+                child: Column(
+                  children:
+                      services.map((emp) {
+                        return CheckboxListTile(
+                          title: Text(emp),
+                          value: tempSelected.contains(emp),
+                          onChanged: (bool? checked) {
+                            setStateDialog(() {
+                              if (checked == true) {
+                                tempSelected.add(emp);
+                              } else {
+                                tempSelected.remove(emp);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Cancelar"),
+                ),
+                ElevatedButton(
+                  onPressed:
+                      tempSelected.isEmpty
+                          ? null
+                          : () {
+                            Navigator.pop(context, tempSelected);
+                          },
+                  child: Text("Aplicar"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    if (result != null) {
+      setState(() {
+        selectedEServices = result;
+        if(result.isEmpty){
+          widget.viewModel.filteredByServices(0);
+        }else{
+          widget.viewModel.filteredByServices(int.parse(result.first));
+        }
       });
     }
   }
@@ -97,7 +226,9 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                             right: 6,
                           ),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              _showEmployeeSelector();
+                            },
                             child: Text("Empleado"),
                           ),
                         ),
@@ -109,7 +240,9 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                             right: 24,
                           ),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              _showServiceSelector();
+                            },
                             child: Text("Servicios"),
                           ),
                         ),
@@ -118,7 +251,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                     Column(
                       children: [
                         SizedBox(
-                          height: 400, // 30% de la altura de la pantalla
+                          height: 400,
                           child: Padding(
                             padding: const EdgeInsets.all(24.0),
                             child: GeneralInformationWidget(
@@ -206,7 +339,9 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                           right: 6,
                         ),
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _showEmployeeSelector();
+                          },
                           child: Text("Empleado"),
                         ),
                       ),
@@ -218,7 +353,9 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                           right: 24,
                         ),
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _showServiceSelector();
+                          },
                           child: Text("Servicios"),
                         ),
                       ),

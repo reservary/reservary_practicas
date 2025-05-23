@@ -17,17 +17,26 @@ class _EmployeeGraphicWidgetState extends State<EmployeeGraphicWidget> {
   @override
   void initState() {
     super.initState();
-    
   }
-
 
   @override
   Widget build(BuildContext context) {
-    final employeesNames=widget.viewModel.totalBookingsPerEmployee.keys.toList();
-    final employessBookings=widget.viewModel.totalBookingsPerEmployee.values.toList();
+    final selectedEmployeeId = widget.viewModel.selectedEmployeeId;
 
-    if(employeesNames.isEmpty || employessBookings.isEmpty){
-      return Center(child: CircularProgressIndicator(),);
+    final employeesNames =
+        selectedEmployeeId != null
+            ? [selectedEmployeeId]
+            : widget.viewModel.totalBookingsPerEmployee.keys.toList();
+    final employessBookings =
+        selectedEmployeeId != null
+            ? [
+              widget.viewModel.totalBookingsPerEmployee[selectedEmployeeId] ??
+                  0,
+            ]
+            : widget.viewModel.totalBookingsPerEmployee.values.toList();
+
+    if (employeesNames.isEmpty || employessBookings.isEmpty) {
+      return Center(child: CircularProgressIndicator());
     }
     return Column(
       children: [
