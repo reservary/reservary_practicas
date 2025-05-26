@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:seccion_estadisticas_v2/bookings_graphic_widget.dart';
 import 'package:seccion_estadisticas_v2/general_information_widget.dart';
 import 'package:seccion_estadisticas_v2/employee_graphic_widget.dart';
@@ -21,7 +20,6 @@ class _StatisticsScreen extends State<StatisticsScreen> {
   List<String> selectedEServices = [];
   DateTime? _startDate;
   DateTime? _endDate;
-  final _dateFormat = DateFormat('dd/MM/yyyy');
   String? employeeId;
 
   Future<void> _selectDateRange(BuildContext context) async {
@@ -45,6 +43,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
         _startDate = selectedRange.start;
         _endDate = selectedRange.end;
       });
+      widget.viewModel.filteredByDate(_startDate, _endDate);
     }
   }
 
@@ -102,9 +101,9 @@ class _StatisticsScreen extends State<StatisticsScreen> {
     if (result != null) {
       setState(() {
         selectedEmployees = result;
-        if(result.isEmpty){
+        if (result.isEmpty) {
           widget.viewModel.filteredEmployee(null);
-        }else{
+        } else {
           widget.viewModel.filteredEmployee(result.first);
         }
       });
@@ -112,49 +111,51 @@ class _StatisticsScreen extends State<StatisticsScreen> {
   }
 
   void _showServiceSelector() async {
-    final List<String> services =
-        widget.viewModel.totalBookingsPerService.keys.toList();
-    final tempSelected = List<String>.from(selectedEServices);
-    final result = await showDialog<List<String>>(
+    final List<String> services = widget.viewModel.totalBookingsPerService.keys.toList();
+    final currentSelection = List<String>.from(widget.viewModel.selectedServices);
+    
+    await showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             return AlertDialog(
-              title: Text("Seleccione los servicios"),
+              title: const Text("Seleccione los servicios"),
               content: SingleChildScrollView(
                 child: Column(
-                  children:
-                      services.map((emp) {
-                        return CheckboxListTile(
-                          title: Text(emp),
-                          value: tempSelected.contains(emp),
-                          onChanged: (bool? checked) {
-                            setStateDialog(() {
-                              if (checked == true) {
-                                tempSelected.add(emp);
-                              } else {
-                                tempSelected.remove(emp);
-                              }
-                            });
-                          },
-                        );
-                      }).toList(),
+                  mainAxisSize: MainAxisSize.min,
+                  children: services.map((service) {
+                    return CheckboxListTile(
+                      title: Text(service),
+                      value: currentSelection.contains(service),
+                      onChanged: (bool? checked) {
+                        setStateDialog(() {
+                          if (checked == true) {
+                            currentSelection.add(service);
+                          } else {
+                            currentSelection.remove(service);
+                          }
+                        });
+                        widget.viewModel.filteredByServices(List<String>.from(currentSelection));
+                      },
+                    );
+                  }).toList(),
                 ),
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("Cancelar"),
+                  onPressed: () {
+                    setStateDialog(() {
+                      currentSelection.clear();
+                    });
+                    widget.viewModel.filteredByServices([]);
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Limpiar"),
                 ),
-                ElevatedButton(
-                  onPressed:
-                      tempSelected.isEmpty
-                          ? null
-                          : () {
-                            Navigator.pop(context, tempSelected);
-                          },
-                  child: Text("Aplicar"),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cerrar"),
                 ),
               ],
             );
@@ -162,16 +163,6 @@ class _StatisticsScreen extends State<StatisticsScreen> {
         );
       },
     );
-    if (result != null) {
-      setState(() {
-        selectedEServices = result;
-        if(result.isEmpty){
-          widget.viewModel.filteredByServices(0);
-        }else{
-          widget.viewModel.filteredByServices(int.parse(result.first));
-        }
-      });
-    }
   }
 
   @override

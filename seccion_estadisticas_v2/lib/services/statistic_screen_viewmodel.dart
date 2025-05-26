@@ -12,14 +12,15 @@ class StatisticsScreenViewModel extends ChangeNotifier {
   DateTime? _initDate;
   DateTime? _endDate;
   final _dateFormat = DateFormat('dd/MM/yyyy');
-  int? _employeeId;
-  int? _servicesId;
   String? _selectedEmployeeId;
-  String? get selectedEmployeeId => _selectedEmployeeId;
-
   bool _isLoading = false;
-  bool get isLoading => _isLoading;
+  List<String> _selectedServices = [];
 
+  DateTime? get initDate => _initDate;
+  DateTime? get endDate => _endDate;
+  bool get isLoading => _isLoading;
+  List<String> get selectedServices => _selectedServices;
+  String? get selectedEmployeeId => _selectedEmployeeId;
   Statistics? get originalStats => _originalStats;
   Statistics? get filteredStats => _filteredStats;
 
@@ -51,6 +52,9 @@ class StatisticsScreenViewModel extends ChangeNotifier {
   }
 
   Map<String, int> get totalBookingsPerService {
+    if (_filteredStats != null) {
+      return _filteredStats!.totalBookingsPerService;
+    }
     if (_originalStats == null) return {};
     return _originalStats!.totalBookingsPerService;
   }
@@ -84,7 +88,7 @@ class StatisticsScreenViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Statistics filteredByServices(int serviceId) {
+  Statistics filteredByDate(DateTime? initDate, DateTime? endDate) {
     if (_originalStats == null) {
       return Statistics(
         totalBookings: 0,
@@ -98,29 +102,67 @@ class StatisticsScreenViewModel extends ChangeNotifier {
         totalBookingsPerPlatform: {},
       );
     }
-
-    if (serviceId == 0) {
+    if (initDate == null || endDate == null) {
       _filteredStats = _originalStats;
+      _initDate = null;
+      _endDate = null;
       notifyListeners();
       return _filteredStats!;
     }
     List<Progress> filteredProgress =
-        _originalStats!.progress
-            .where((p) => _originalStats!.serviceId == serviceId)
-            .toList();
+        _originalStats!.progress.where((p) {
+          final date = DateTime.parse(p.date);
+          return date.isAfter(initDate.subtract(Duration(days: 1))) &&
+              date.isBefore(endDate.add(Duration(days: 1)));
+        }).toList();
+
     _filteredStats = Statistics(
       totalBookings: _originalStats!.totalBookings,
       totalBilledAmount: _originalStats!.totalBilledAmount,
       employeeId: _originalStats!.employeeId,
-      serviceId: serviceId,
+      serviceId: _originalStats!.serviceId,
       progress: filteredProgress,
       totalBookingsPerEmployee: _originalStats!.totalBookingsPerEmployee,
       totalBookingsByStatus: _originalStats!.totalBookingsByStatus,
       totalBookingsPerService: _originalStats!.totalBookingsPerService,
       totalBookingsPerPlatform: _originalStats!.totalBookingsPerPlatform,
     );
+
+    _initDate = initDate;
+    _endDate = endDate;
     notifyListeners();
     return _filteredStats!;
+  }
+
+  void filteredByServices(List<String> services) {
+    if (_originalStats == null) return;
+
+    _selectedServices = List<String>.from(services);
+    
+    if (services.isEmpty) {
+      _filteredStats = _originalStats;
+    } else {
+      Map<String, int> filteredServices = {};
+      for (var service in services) {
+        if (_originalStats!.totalBookingsPerService.containsKey(service)) {
+          filteredServices[service] = _originalStats!.totalBookingsPerService[service]!;
+        }
+      }
+
+      _filteredStats = Statistics(
+        totalBookings: _originalStats!.totalBookings,
+        totalBilledAmount: _originalStats!.totalBilledAmount,
+        employeeId: _originalStats!.employeeId,
+        serviceId: services.isNotEmpty ? int.parse(services.first) : 0,
+        progress: _originalStats!.progress,
+        totalBookingsPerEmployee: _originalStats!.totalBookingsPerEmployee,
+        totalBookingsByStatus: _originalStats!.totalBookingsByStatus,
+        totalBookingsPerService: filteredServices,
+        totalBookingsPerPlatform: _originalStats!.totalBookingsPerPlatform,
+      );
+    }
+
+    notifyListeners();
   }
 
   Statistics filteredEmployee(String? employeeId) {
@@ -155,7 +197,7 @@ class StatisticsScreenViewModel extends ChangeNotifier {
       totalBookingsPerService: _originalStats!.totalBookingsPerService,
       totalBookingsPerPlatform: _originalStats!.totalBookingsPerPlatform,
     );
-    _selectedEmployeeId=employeeId;
+    _selectedEmployeeId = employeeId;
     notifyListeners();
     return _filteredStats!;
   }

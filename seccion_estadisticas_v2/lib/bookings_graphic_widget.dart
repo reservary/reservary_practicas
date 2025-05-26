@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:seccion_estadisticas_v2/models/progress.dart';
 import 'package:seccion_estadisticas_v2/services/statistic_screen_viewmodel.dart';
 
@@ -18,29 +17,11 @@ class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
   @override
   void initState() {
     super.initState();
-    _filteredProgress = List.from(
+    _filteredProgress = List.from( 
       widget.viewModel.allProgress,
     )..sort((a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)));
   }
 
-  //
-
-  // List<Progress> _getFilteredProgress() {
-  //   if (_startDate == null || _endDate == null) {
-  //     return List.from(widget.stats.progress)..sort(
-  //       (a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)),
-  //     );
-  //   }
-
-  //   return widget.stats.progress.where((p) {
-  //       final filteredDates = DateTime.parse(p.date);
-  //       return filteredDates.isAfter(_startDate!.subtract(Duration(days: 1))) &&
-  //           filteredDates.isBefore(_endDate!.add(Duration(days: 1)));
-  //     }).toList()
-  //     ..sort(
-  //       (a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)),
-  //     );
-  // }
 
   @override
   Widget build(BuildContext context) {
