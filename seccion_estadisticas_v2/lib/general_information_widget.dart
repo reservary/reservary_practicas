@@ -16,7 +16,7 @@ class _GeneralInformationWidgetState extends State<GeneralInformationWidget> {
     return ListenableBuilder(
       listenable: widget.viewModel,
       builder: (context, _) {
-        final generalInformationstats = widget.viewModel.originalStats;
+        final generalInformationstats = widget.viewModel.filteredStats ?? widget.viewModel.originalStats;
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,

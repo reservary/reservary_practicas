@@ -15,7 +15,7 @@ class _PlatformGraphicWidgetState extends State<PlatformGraphicWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final totalBookingsPerPlatform = widget.viewModel.totalBookingsPerPlatform;
+    final totalBookingsPerPlatform = widget.viewModel.filteredStats?.totalBookingsPerPlatform??widget.viewModel.totalBookingsPerPlatform;
     final List<String> namePlatform = totalBookingsPerPlatform.keys.toList();
     final List<int> numBookings = totalBookingsPerPlatform.values.toList();
     return Column(

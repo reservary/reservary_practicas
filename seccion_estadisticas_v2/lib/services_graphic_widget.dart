@@ -12,7 +12,9 @@ class ServicesGraphicWidget extends StatelessWidget {
     return ListenableBuilder(
       listenable: viewModel,
       builder: (context, _) {
-        final servicesData = viewModel.totalBookingsPerService;
+        final servicesData =
+            viewModel.filteredStats?.totalBookingsPerService ??
+            viewModel.totalBookingsPerService;
         final servicesNames = servicesData.keys.toList();
         final servicesBookings = servicesData.values.toList();
 

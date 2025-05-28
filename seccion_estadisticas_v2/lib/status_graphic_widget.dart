@@ -16,7 +16,7 @@ class _StatusGraphicWidgetState extends State<StatusGraphicWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final totalBookingsByStatus = widget.viewModel.totalBookingsByStatus;
+    final totalBookingsByStatus = widget.viewModel.filteredStats?.totalBookingsByStatus?? widget.viewModel.totalBookingsByStatus;
     final List<String> status = totalBookingsByStatus.keys.toList();
     final List<int> statusValues = totalBookingsByStatus.values.toList();
     return Column(
