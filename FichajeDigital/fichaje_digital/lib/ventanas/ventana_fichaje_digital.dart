@@ -1,7 +1,10 @@
-import 'dart:convert';
+import 'package:fichaje_digital/modelo/asistencia.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'dart:async';
+import 'dart:convert';
+
 
 class FichajeDigitalWidget extends StatefulWidget {
   const FichajeDigitalWidget({super.key});
@@ -11,9 +14,13 @@ class FichajeDigitalWidget extends StatefulWidget {
 }
 
 class _FichajeDigitalWidgetState extends State<FichajeDigitalWidget> {
-  DateTime? _entrada;
-  DateTime? _salida;
-  Duration _duracion = Duration.zero;
+  bool trabajando = false;
+  DateTime? inicioSesion;
+  Duration tiempoSesion = Duration.zero;
+  Timer? _timer;
+
+  List<Asistencia> registros = [];
+
   String _ip = 'Desconocida';
   String _localizacionIP = 'Desconocida';
   double? _latitud;
@@ -37,92 +44,126 @@ class _FichajeDigitalWidgetState extends State<FichajeDigitalWidget> {
           _localizacionIP = '${data['city']}, ${data['country_name']}';
         });
       }
-    } catch (e) {
-      print('Error obteniendo IP: $e');
-    }
+    } catch (_) {}
   }
 
   Future<void> _obtenerGPS() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) return;
 
-    permission = await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.deniedForever || permission == LocationPermission.denied) return;
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) return;
     }
 
     try {
-      final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      final pos = await Geolocator.getCurrentPosition();
       setState(() {
         _latitud = pos.latitude;
         _longitud = pos.longitude;
         _ubicacionGPS = 'Lat: ${pos.latitude}, Lng: ${pos.longitude}';
       });
-    } catch (e) {
-      print('Error GPS: $e');
-    }
+    } catch (_) {}
   }
 
-  void _start() {
+  void _registrarAsistencia(String tipo) {
+    final nueva = Asistencia(
+      fechaRegistro: DateTime.now(),
+      tipo: tipo,
+      ip: _ip,
+      localizacionIP: _localizacionIP,
+      latitud: _latitud,
+      longitud: _longitud,
+      ubicacionGPS: _ubicacionGPS,
+      sistema: 'Web',
+    );
+
     setState(() {
-      _entrada = DateTime.now();
-      _duracion = Duration.zero;
-    });
-    _updateTimer();
-  }
-
-  void _stop() {
-    setState(() {
-      _salida = DateTime.now();
+      registros.insert(0, nueva);
     });
 
-    print('Entrada: $_entrada');
-    print('Salida: $_salida');
-    print('IP: $_ip');
-    print('Ubicación IP: $_localizacionIP');
-    print('GPS: $_ubicacionGPS');
-    print('Sistema: Web');
+    print('Registrado: $nueva');
   }
 
-  void _updateTimer() {
-    Future.doWhile(() async {
-      if (_entrada != null && _salida == null) {
-        await Future.delayed(const Duration(seconds: 1));
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (inicioSesion != null && trabajando) {
         setState(() {
-          _duracion = DateTime.now().difference(_entrada!);
+          tiempoSesion = DateTime.now().difference(inicioSesion!);
         });
-        return true;
       }
-      return false;
     });
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  void _toggleFichaje() {
+    if (!trabajando) {
+      _registrarAsistencia("entrada");
+      inicioSesion = DateTime.now();
+      _startTimer();
+    } else {
+      _registrarAsistencia("salida");
+      _stopTimer();
+      tiempoSesion = Duration.zero;
+    }
+
+    setState(() {
+      trabajando = !trabajando;
+    });
+  }
+
+  String _formatearDuracion(Duration duracion) {
+    final h = duracion.inHours.toString().padLeft(2, '0');
+    final m = (duracion.inMinutes % 60).toString().padLeft(2, '0');
+    final s = (duracion.inSeconds % 60).toString().padLeft(2, '0');
+    return '$h:$m:$s';
+  }
+
+  @override
+  void dispose() {
+    _stopTimer();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final trabajando = _entrada != null && _salida == null;
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          trabajando
-              ? 'Tiempo trabajado: ${_duracion.inHours.toString().padLeft(2, '0')}:${(_duracion.inMinutes % 60).toString().padLeft(2, '0')}:${(_duracion.inSeconds % 60).toString().padLeft(2, '0')}'
-              : 'No estás trabajando actualmente.',
-          style: const TextStyle(fontSize: 20),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            Text(
+              trabajando
+                  ? 'Tiempo actual: ${_formatearDuracion(tiempoSesion)}'
+                  : 'No estás fichando',
+              style: const TextStyle(fontSize: 20),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _toggleFichaje,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: trabajando ? Colors.red : Colors.green,
+              ),
+              child: Text(trabajando ? 'STOP' : 'START'),
+            ),
+            const SizedBox(height: 40),
+            const Divider(),
+            const Text('Historial de fichajes', style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 10),
+            for (var reg in registros)
+              ListTile(
+                title: Text('${reg.tipo.toUpperCase()} - ${reg.fechaRegistro}'),
+                subtitle: Text('${reg.ip} | ${reg.localizacionIP} | ${reg.ubicacionGPS ?? 'Sin GPS'}'),
+              ),
+          ],
         ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: trabajando ? _stop : _start,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: trabajando ? Colors.red : Colors.green,
-          ),
-          child: Text(trabajando ? 'STOP' : 'START'),
-        ),
-      ],
+      ),
     );
   }
 }

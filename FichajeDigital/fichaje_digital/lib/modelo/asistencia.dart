@@ -1,6 +1,6 @@
 class Asistencia {
-  final DateTime fechaEntrada;
-  DateTime? fechaSalida;
+  final DateTime fechaRegistro;
+  final String tipo; // "entrada" o "salida"
   final String ip;
   final String localizacionIP;
   final double? latitud;
@@ -9,8 +9,8 @@ class Asistencia {
   final String sistema;
 
   Asistencia({
-    required this.fechaEntrada,
-    this.fechaSalida,
+    required this.fechaRegistro,
+    required this.tipo,
     required this.ip,
     required this.localizacionIP,
     this.latitud,
@@ -18,4 +18,9 @@ class Asistencia {
     this.ubicacionGPS,
     required this.sistema,
   });
+
+  @override
+  String toString() {
+    return '$tipo - $fechaRegistro - $ip - $localizacionIP - GPS: $ubicacionGPS - Sistema: $sistema';
+  }
 }
