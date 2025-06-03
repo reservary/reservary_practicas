@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Clase que representa un mensaje del chat
 class ChatMessage {
   final String sender;
   final String message;
@@ -24,31 +25,36 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  List<ChatMessage> _messages = [];
-  final TextEditingController _controller = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  String _nombreUsuario = '';
-  final String _urlMensajes = 'https://invitaty.com/wp-json/miapi/v1/mensajes';
+  List<ChatMessage> _messages = []; // Lista de mensajes del chat
+  final TextEditingController _controller =
+      TextEditingController(); // Controlador del campo de texto
+  final ScrollController _scrollController =
+      ScrollController(); // Controlador del scroll
+  String _nombreUsuario = ''; // Nombre del usuario actual
+  final String _urlMensajes =
+      'https://invitaty.com/wp-json/miapi/v1/mensajes'; // Endpoint para obtener mensajes
   final String _urlEnviar =
-      'https://invitaty.com/wp-json/miapi/v1/enviar-mensaje';
+      'https://invitaty.com/wp-json/miapi/v1/enviar-mensaje'; // Endpoint para enviar mensajes
 
   @override
   void initState() {
     super.initState();
-    _initNombreUsuario();
+    _initNombreUsuario(); // Al iniciar, comprobamos si ya hay un nombre guardado
   }
 
+  // Inicializa el nombre del usuario, pidiéndoselo si no está guardado
   Future<void> _initNombreUsuario() async {
     final prefs = await SharedPreferences.getInstance();
     final savedNombre = prefs.getString('nombreUsuario');
     if (savedNombre != null && savedNombre.isNotEmpty) {
       _nombreUsuario = savedNombre;
-      _startFetching();
+      _startFetching(); // Si ya hay nombre, empezamos a obtener mensajes
     } else {
-      _pedirNombreUsuario();
+      _pedirNombreUsuario(); // Si no, se lo pedimos
     }
   }
 
+  // Muestra un diálogo para pedir el nombre al usuario
   void _pedirNombreUsuario() async {
     final nombre = await showDialog<String>(
       context: context,
@@ -70,6 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
       },
     );
 
+    // Guardamos el nombre introducido y empezamos a obtener mensajes
     if (nombre != null && nombre.isNotEmpty) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('nombreUsuario', nombre);
@@ -78,11 +85,16 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  // Lanza la obtención periódica de mensajes cada 2 segundos
   void _startFetching() {
-    _fetchMessages();
-    Timer.periodic(const Duration(seconds: 2), (_) => _fetchMessages());
+    _fetchMessages(); // Primero carga inicial
+    Timer.periodic(
+      const Duration(seconds: 2),
+      (_) => _fetchMessages(),
+    ); // Luego actualiza cada 2 s
   }
 
+  // Obtiene mensajes del backend y actualiza la lista
   Future<void> _fetchMessages() async {
     try {
       final response = await http.get(Uri.parse(_urlMensajes));
@@ -99,13 +111,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 })
                 .toList()
                 .reversed
-                .toList();
+                .toList(); // Los invertimos para mostrar los más nuevos al final
 
         if (mounted) {
           setState(() {
             _messages = newMessages;
           });
-          // Autoscroll hacia el último mensaje
+
+          // Hacemos scroll automático al final del chat
           Future.delayed(Duration(milliseconds: 100), () {
             if (_scrollController.hasClients) {
               _scrollController.animateTo(
@@ -122,6 +135,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  // Envía un mensaje al servidor
   Future<void> _sendMessage(String text) async {
     try {
       final response = await http.post(
@@ -130,8 +144,8 @@ class _ChatScreenState extends State<ChatScreen> {
         body: jsonEncode({'nombre': _nombreUsuario, 'mensaje': text}),
       );
       if (response.statusCode == 200) {
-        _controller.clear();
-        _fetchMessages();
+        _controller.clear(); // Limpia el campo de texto
+        _fetchMessages(); // Actualiza los mensajes para incluir el nuevo
       } else {
         print('Error al enviar mensaje: ${response.body}');
       }
@@ -140,8 +154,9 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  // Construye una burbuja de mensaje en el chat
   Widget _buildMessageBubble(ChatMessage msg) {
-    final isOwn = msg.sender == _nombreUsuario;
+    final isOwn = msg.sender == _nombreUsuario; // Para diferenciar estilo
     return Align(
       alignment: isOwn ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -167,6 +182,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // Interfaz principal de la pantalla de chat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,6 +207,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     decoration: const InputDecoration(
                       hintText: 'Escribe un mensaje...',
                     ),
+                    onSubmitted: (text) {
+                      final trimmed = text.trim();
+                      if (trimmed.isNotEmpty) {
+                        _sendMessage(trimmed);
+                      }
+                    },
                   ),
                 ),
                 IconButton(
@@ -198,7 +220,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   onPressed: () {
                     final text = _controller.text.trim();
                     if (text.isNotEmpty) {
-                      _sendMessage(text);
+                      _sendMessage(text); // Botón para enviar mensaje
                     }
                   },
                 ),
