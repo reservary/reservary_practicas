@@ -50,8 +50,10 @@ class _StatisticsScreen extends State<StatisticsScreen> {
   void _showEmployeeSelector() async {
     final List<String> employees =
         widget.viewModel.totalBookingsPerEmployee.keys.toList();
-    final currentSelection = List<String>.from(widget.viewModel.selectedEmployeeIds);
-    
+    final currentSelection = List<String>.from(
+      widget.viewModel.selectedEmployeeIds,
+    );
+
     await showDialog(
       context: context,
       builder: (context) {
@@ -62,22 +64,25 @@ class _StatisticsScreen extends State<StatisticsScreen> {
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: employees.map((employee) {
-                    return CheckboxListTile(
-                      title: Text(employee),
-                      value: currentSelection.contains(employee),
-                      onChanged: (bool? checked) {
-                        setStateDialog(() {
-                          if (checked == true) {
-                            currentSelection.add(employee);
-                          } else {
-                            currentSelection.remove(employee);
-                          }
-                        });
-                        widget.viewModel.filteredByEmployees(List<String>.from(currentSelection));
-                      },
-                    );
-                  }).toList(),
+                  children:
+                      employees.map((employee) {
+                        return CheckboxListTile(
+                          title: Text(employee),
+                          value: currentSelection.contains(employee),
+                          onChanged: (bool? checked) {
+                            setStateDialog(() {
+                              if (checked == true) {
+                                currentSelection.add(employee);
+                              } else {
+                                currentSelection.remove(employee);
+                              }
+                            });
+                            widget.viewModel.filteredByEmployees(
+                              List<String>.from(currentSelection),
+                            );
+                          },
+                        );
+                      }).toList(),
                 ),
               ),
               actions: [
@@ -104,9 +109,12 @@ class _StatisticsScreen extends State<StatisticsScreen> {
   }
 
   void _showServiceSelector() async {
-    final List<String> services = widget.viewModel.totalBookingsPerService.keys.toList();
-    final currentSelection = List<String>.from(widget.viewModel.selectedServices);
-    
+    final List<String> services =
+        widget.viewModel.totalBookingsPerService.keys.toList();
+    final currentSelection = List<String>.from(
+      widget.viewModel.selectedServices,
+    );
+
     await showDialog(
       context: context,
       builder: (context) {
@@ -117,22 +125,25 @@ class _StatisticsScreen extends State<StatisticsScreen> {
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: services.map((service) {
-                    return CheckboxListTile(
-                      title: Text(service),
-                      value: currentSelection.contains(service),
-                      onChanged: (bool? checked) {
-                        setStateDialog(() {
-                          if (checked == true) {
-                            currentSelection.add(service);
-                          } else {
-                            currentSelection.remove(service);
-                          }
-                        });
-                        widget.viewModel.filteredByServices(List<String>.from(currentSelection));
-                      },
-                    );
-                  }).toList(),
+                  children:
+                      services.map((service) {
+                        return CheckboxListTile(
+                          title: Text(service),
+                          value: currentSelection.contains(service),
+                          onChanged: (bool? checked) {
+                            setStateDialog(() {
+                              if (checked == true) {
+                                currentSelection.add(service);
+                              } else {
+                                currentSelection.remove(service);
+                              }
+                            });
+                            widget.viewModel.filteredByServices(
+                              List<String>.from(currentSelection),
+                            );
+                          },
+                        );
+                      }).toList(),
                 ),
               ),
               actions: [
@@ -180,131 +191,11 @@ class _StatisticsScreen extends State<StatisticsScreen> {
 
           return isSmallScreen
               ? SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Text("Filtros:"),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 24,
-                              bottom: 24,
-                              left: 24,
-                              right: 6,
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                _selectDateRange(context);
-                              },
-                              child: Text("Fechas"),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 24,
-                              bottom: 24,
-                              left: 6,
-                              right: 6,
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                _showEmployeeSelector();
-                              },
-                              child: Text("Empleado"),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 24,
-                              bottom: 24,
-                              left: 6,
-                              right: 24,
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                _showServiceSelector();
-                              },
-                              child: Text("Servicios"),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: 400,
-                            child: Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: GeneralInformationWidget(
-                                viewModel: widget.viewModel,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 400,
-                            child: Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: BookingsGraphicWidget(
-                                viewModel: widget.viewModel,
-                              ),
-                            ),
-                          ),
-                          if (widget.viewModel.selectedEmployeeIds.length != 1) ...[
-                            SizedBox(
-                              height: 400,
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: EmployeeGraphicWidget(
-                                  viewModel: widget.viewModel,
-                                ),
-                              ),
-                            ),
-                          ],
-                          SizedBox(
-                            height: 400,
-                            child: Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: PlatformGraphicWidget(
-                                viewModel: widget.viewModel,
-                              ),
-                            ),
-                          ),
-                          if (widget.viewModel.selectedServices.length != 1) ...[
-                            SizedBox(
-                              height: 400,
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: ServicesGraphicWidget(
-                                  viewModel: widget.viewModel,
-                                ),
-                              ),
-                            ),
-                          ],
-                          SizedBox(
-                            height: 400,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: StatusGraphicWidget(
-                                viewModel: widget.viewModel,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )
-              : Column(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Text("Filtros:"),
-                        ),
                         Padding(
                           padding: const EdgeInsets.only(
                             top: 24,
@@ -347,105 +238,422 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                             child: Text("Servicios"),
                           ),
                         ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _startDate = null;
+                              _endDate = null;
+                            });
+                            widget.viewModel.filteredByDate(null, null);
+                            widget.viewModel.filteredByEmployees([]);
+                            widget.viewModel.filteredByServices([]);
+                          },
+                          icon: Icon(Icons.filter_alt_off_sharp),
+                          tooltip: "Eliminar filtros",
+                        ),
                       ],
                     ),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                top: 24,
-                                left: 24,
-                                right: 12,
-                                bottom: 12,
-                              ),
-                              child: GeneralInformationWidget(
-                                viewModel: widget.viewModel,
+                    if (widget.viewModel.selectedEmployeeIds.length >= 2)
+                      Padding(
+                        padding: const EdgeInsets.all(9),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Empleados seleccionados: ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                top: 24,
-                                left: 12,
-                                right: 12,
-                                bottom: 12,
-                              ),
-                              child: BookingsGraphicWidget(
-                                viewModel: widget.viewModel,
-                              ),
-                            ),
-                          ),
-                          if (widget.viewModel.selectedEmployeeIds.length != 1)
                             Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 24,
-                                  left: 12,
-                                  right: 24,
-                                  bottom: 12,
-                                ),
-                                child: SizedBox(
-                                  height: 300,
-                                  child: EmployeeGraphicWidget(
-                                    viewModel: widget.viewModel,
+                              child: Wrap(
+                                spacing: 8,
+                                children:
+                                    widget.viewModel.selectedEmployeeIds.map((
+                                      employee,
+                                    ) {
+                                      return Chip(
+                                        label: Text(employee),
+                                        deleteIcon: Icon(Icons.close),
+                                        onDeleted: () {
+                                          final newSelection =
+                                              List<String>.from(
+                                                widget
+                                                    .viewModel
+                                                    .selectedEmployeeIds,
+                                              )..remove(employee);
+                                          widget.viewModel.filteredByEmployees(
+                                            newSelection,
+                                          );
+                                        },
+                                      );
+                                    }).toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    if (widget.viewModel.selectedServices.length >= 2)
+                      Padding(
+                        padding: const EdgeInsets.all(9),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Servicios seleccionados: ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Expanded(
+                              child: Wrap(
+                                spacing: 8,
+                                children:
+                                    widget.viewModel.selectedServices.map((
+                                      service,
+                                    ) {
+                                      return Chip(
+                                        label: Text(service),
+                                        deleteIcon: Icon(Icons.close),
+                                        onDeleted: () {
+                                          final newSelection =
+                                              List<String>.from(
+                                                widget
+                                                    .viewModel
+                                                    .selectedServices,
+                                              )..remove(service);
+                                          widget.viewModel.filteredByServices(
+                                            newSelection,
+                                          );
+                                        },
+                                      );
+                                    }).toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 400,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: GeneralInformationWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 400,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: BookingsGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                        if (widget.viewModel.selectedEmployeeIds.length !=
+                            1) ...[
+                          SizedBox(
+                            height: 400,
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: EmployeeGraphicWidget(
+                                viewModel: widget.viewModel,
+                              ),
+                            ),
+                          ),
+                        ],
+                        SizedBox(
+                          height: 400,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: PlatformGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                        if (widget.viewModel.selectedServices.length != 1) ...[
+                          SizedBox(
+                            height: 400,
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: ServicesGraphicWidget(
+                                viewModel: widget.viewModel,
+                              ),
+                            ),
+                          ),
+                        ],
+                        SizedBox(
+                          height: 400,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: StatusGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+              : Column(
+                children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 24,
+                          bottom: 24,
+                          left: 24,
+                          right: 6,
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _selectDateRange(context);
+                          },
+                          child: Text("Fechas"),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 24,
+                          bottom: 24,
+                          left: 6,
+                          right: 6,
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _showEmployeeSelector();
+                          },
+                          child: Text("Empleado"),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 24,
+                          bottom: 24,
+                          left: 6,
+                          right: 24,
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _showServiceSelector();
+                          },
+                          child: Text("Servicios"),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _startDate = null;
+                            _endDate = null;
+                          });
+                          widget.viewModel.filteredByDate(null, null);
+                          widget.viewModel.filteredByEmployees([]);
+                          widget.viewModel.filteredByServices([]);
+                        },
+                        icon: Icon(Icons.filter_alt_off_sharp),
+                        tooltip: "Eliminar filtros",
+                      ),
+                    ],
+                  ),
+                  if (widget.viewModel.selectedEmployeeIds.length >= 2 ||
+                      widget.viewModel.selectedServices.length >= 2)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (widget.viewModel.selectedEmployeeIds.length >= 2)
+                            Expanded(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Empleados: ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
                                   ),
-                                ),
+                                  Expanded(
+                                    child: Wrap(
+                                      spacing: 8,
+                                      children:
+                                          widget.viewModel.selectedEmployeeIds
+                                              .map((employee) {
+                                                return Chip(
+                                                  label: Text(employee),
+                                                  deleteIcon: Icon(Icons.close),
+                                                  onDeleted: () {
+                                                    final newSelection = List<
+                                                      String
+                                                    >.from(
+                                                      widget
+                                                          .viewModel
+                                                          .selectedEmployeeIds,
+                                                    )..remove(employee);
+                                                    widget.viewModel
+                                                        .filteredByEmployees(
+                                                          newSelection,
+                                                        );
+                                                  },
+                                                );
+                                              })
+                                              .toList(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (widget.viewModel.selectedEmployeeIds.length >=
+                                  2 &&
+                              widget.viewModel.selectedServices.length >= 2)
+                            SizedBox(width: 24),
+                          if (widget.viewModel.selectedServices.length >= 2)
+                            Expanded(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Servicios: ",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Wrap(
+                                      spacing: 8,
+                                      children:
+                                          widget.viewModel.selectedServices.map(
+                                            (service) {
+                                              return Chip(
+                                                label: Text(service),
+                                                deleteIcon: Icon(Icons.close),
+                                                onDeleted: () {
+                                                  final newSelection =
+                                                      List<String>.from(
+                                                        widget
+                                                            .viewModel
+                                                            .selectedServices,
+                                                      )..remove(service);
+                                                  widget.viewModel
+                                                      .filteredByServices(
+                                                        newSelection,
+                                                      );
+                                                },
+                                              );
+                                            },
+                                          ).toList(),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: Row(
-                        children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 24,
+                              left: 24,
+                              right: 12,
+                              bottom: 12,
+                            ),
+                            child: GeneralInformationWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 24,
+                              left: 12,
+                              right: 12,
+                              bottom: 12,
+                            ),
+                            child: BookingsGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                        if (widget.viewModel.selectedEmployeeIds.length != 1)
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(
-                                top: 12,
-                                left: 24,
-                                right: 12,
-                                bottom: 24,
+                                top: 24,
+                                left: 12,
+                                right: 24,
+                                bottom: 12,
                               ),
-                              child: PlatformGraphicWidget(
-                                viewModel: widget.viewModel,
-                              ),
-                            ),
-                          ),
-                          if (widget.viewModel.selectedServices.length != 1)
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 12,
-                                  left: 12,
-                                  right: 12,
-                                  bottom: 24,
-                                ),
-                                child: ServicesGraphicWidget(
+                              child: SizedBox(
+                                height: 300,
+                                child: EmployeeGraphicWidget(
                                   viewModel: widget.viewModel,
                                 ),
                               ),
                             ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 12,
+                              left: 24,
+                              right: 12,
+                              bottom: 24,
+                            ),
+                            child: PlatformGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                        if (widget.viewModel.selectedServices.length != 1)
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(
                                 top: 12,
                                 left: 12,
-                                right: 24,
+                                right: 12,
                                 bottom: 24,
                               ),
-                              child: StatusGraphicWidget(
+                              child: ServicesGraphicWidget(
                                 viewModel: widget.viewModel,
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 12,
+                              left: 12,
+                              right: 24,
+                              bottom: 24,
+                            ),
+                            child: StatusGraphicWidget(
+                              viewModel: widget.viewModel,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                );
+                  ),
+                ],
+              );
         },
       ),
     );
