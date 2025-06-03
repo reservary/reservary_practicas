@@ -1,4 +1,5 @@
 import 'package:fichaje_digital/modelo/asistencia.dart';
+import 'package:fichaje_digital/widgets/tabla_resumen_horas.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
@@ -161,6 +162,10 @@ class _FichajeDigitalWidgetState extends State<FichajeDigitalWidget> {
                 title: Text('${reg.tipo.toUpperCase()} - ${reg.fechaRegistro}'),
                 subtitle: Text('${reg.ip} | ${reg.localizacionIP} | ${reg.ubicacionGPS ?? 'Sin GPS'}'),
               ),
+              const SizedBox(height: 40),
+          const Divider(),
+          const Text('Resumen por día', style: TextStyle(fontSize: 18)),
+          TablaResumenHoras(registros: registros),
           ],
         ),
       ),
