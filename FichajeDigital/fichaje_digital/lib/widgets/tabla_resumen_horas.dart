@@ -11,7 +11,7 @@ class TablaResumenHoras extends StatelessWidget {
     Map<String, Duration> resumen = {};
     DateTime? ultimaEntrada;
 
-    for (var reg in registros.reversed) {
+    for (var reg in registros) {
       final fechaClave = "${reg.fechaRegistro.year}-${reg.fechaRegistro.month.toString().padLeft(2, '0')}-${reg.fechaRegistro.day.toString().padLeft(2, '0')}";
 
       if (reg.tipo == 'entrada') {

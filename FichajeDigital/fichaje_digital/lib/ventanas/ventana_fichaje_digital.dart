@@ -6,7 +6,6 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 import 'dart:convert';
 
-
 class FichajeDigitalWidget extends StatefulWidget {
   const FichajeDigitalWidget({super.key});
 
@@ -81,7 +80,7 @@ class _FichajeDigitalWidgetState extends State<FichajeDigitalWidget> {
     );
 
     setState(() {
-      registros.insert(0, nueva);
+      registros.add(nueva);
     });
 
     print('Registrado: $nueva');
@@ -119,6 +118,40 @@ class _FichajeDigitalWidgetState extends State<FichajeDigitalWidget> {
     });
   }
 
+  void _simularTiempoExtra() {
+    final ahora = DateTime.now();
+    final inicio = ahora.subtract(const Duration(hours: 9));
+
+    final entrada = Asistencia(
+      fechaRegistro: inicio,
+      tipo: 'entrada',
+      ip: _ip,
+      localizacionIP: _localizacionIP,
+      latitud: _latitud,
+      longitud: _longitud,
+      ubicacionGPS: _ubicacionGPS,
+      sistema: 'Web',
+    );
+
+    final salida = Asistencia(
+      fechaRegistro: ahora,
+      tipo: 'salida',
+      ip: _ip,
+      localizacionIP: _localizacionIP,
+      latitud: _latitud,
+      longitud: _longitud,
+      ubicacionGPS: _ubicacionGPS,
+      sistema: 'Web',
+    );
+
+    setState(() {
+      registros.add(entrada); // primero entrada
+      registros.add(salida);  // luego salida
+    });
+
+    print('Simulado: $entrada y $salida');
+  }
+
   String _formatearDuracion(Duration duracion) {
     final h = duracion.inHours.toString().padLeft(2, '0');
     final m = (duracion.inMinutes % 60).toString().padLeft(2, '0');
@@ -153,6 +186,11 @@ class _FichajeDigitalWidgetState extends State<FichajeDigitalWidget> {
               ),
               child: Text(trabajando ? 'STOP' : 'START'),
             ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _simularTiempoExtra,
+              child: const Text("Simular 9h"),
+            ),
             const SizedBox(height: 40),
             const Divider(),
             const Text('Historial de fichajes', style: TextStyle(fontSize: 18)),
@@ -162,10 +200,10 @@ class _FichajeDigitalWidgetState extends State<FichajeDigitalWidget> {
                 title: Text('${reg.tipo.toUpperCase()} - ${reg.fechaRegistro}'),
                 subtitle: Text('${reg.ip} | ${reg.localizacionIP} | ${reg.ubicacionGPS ?? 'Sin GPS'}'),
               ),
-              const SizedBox(height: 40),
-          const Divider(),
-          const Text('Resumen por día', style: TextStyle(fontSize: 18)),
-          TablaResumenHoras(registros: registros),
+            const SizedBox(height: 40),
+            const Divider(),
+            const Text('Resumen por día', style: TextStyle(fontSize: 18)),
+            TablaResumenHoras(registros: registros),
           ],
         ),
       ),
