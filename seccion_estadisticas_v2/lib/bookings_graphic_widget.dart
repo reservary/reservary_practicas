@@ -20,11 +20,8 @@ class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
       listenable: widget.viewModel,
       builder: (context, _) {
         _filteredProgress = List.from(
-          widget.viewModel.filteredStats?.progress ??
-              widget.viewModel.allProgress,
-        )..sort(
-          (a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)),
-        );
+          widget.viewModel.filteredStats?.progress ?? widget.viewModel.allProgress,
+        )..sort((a, b) => DateTime.parse(a.date).compareTo(DateTime.parse(b.date)));
 
         final spots = List<FlSpot>.generate(_filteredProgress.length, (index) {
           return FlSpot(
@@ -32,18 +29,10 @@ class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
             _filteredProgress[index].bookings.toDouble(),
           );
         });
-
+        
         return Column(
           children: [
             Expanded(
-              flex: 1,
-              child: Text(
-                "Progreso",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Expanded(
-              flex: 9,
               child: SizedBox(
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -94,8 +83,7 @@ class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
                             interval: 1,
                             getTitlesWidget: (value, meta) {
                               final index = value.toInt();
-                              if (index >= 0 &&
-                                  index < _filteredProgress.length) {
+                              if (index >= 0 && index < _filteredProgress.length) {
                                 return Padding(
                                   padding: const EdgeInsets.only(top: 5),
                                   child: Text(
@@ -115,18 +103,10 @@ class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
                       ),
                       extraLinesData: ExtraLinesData(
                         horizontalLines: [
-                          HorizontalLine(
-                            y: 0,
-                            color: Colors.black,
-                            strokeWidth: 2,
-                          ),
+                          HorizontalLine(y: 0, color: Colors.black, strokeWidth: 2),
                         ],
                         verticalLines: [
-                          VerticalLine(
-                            x: 0,
-                            color: Colors.black,
-                            strokeWidth: 2,
-                          ),
+                          VerticalLine(x: 0, color: Colors.black, strokeWidth: 2),
                         ],
                       ),
                       borderData: FlBorderData(

@@ -24,20 +24,18 @@ class _EmployeeGraphicWidgetState extends State<EmployeeGraphicWidget> {
     return ListenableBuilder(
       listenable: widget.viewModel,
       builder: (context, _) {
-        final selectedEmployeeIds = widget.viewModel.selectedEmployeeIds;
-        final employeesData =
-            widget.viewModel.filteredStats?.totalBookingsPerEmployee ??
-            widget.viewModel.totalBookingsPerEmployee;
+        final selectedEmployeeId = widget.viewModel.selectedEmployeeId;
+        final employeesData = widget.viewModel.filteredStats?.totalBookingsPerEmployee ?? widget.viewModel.totalBookingsPerEmployee;
 
         final employeesNames =
-            selectedEmployeeIds.isNotEmpty
-                ? selectedEmployeeIds
+            selectedEmployeeId != null
+                ? [selectedEmployeeId]
                 : employeesData.keys.toList();
         final employessBookings =
-            selectedEmployeeIds.isNotEmpty
-                ? selectedEmployeeIds
-                    .map((id) => employeesData[id] ?? 0)
-                    .toList()
+            selectedEmployeeId != null
+                ? [
+                  employeesData[selectedEmployeeId] ?? 0,
+                ]
                 : employeesData.values.toList();
 
         if (employeesNames.isEmpty || employessBookings.isEmpty) {
@@ -46,14 +44,6 @@ class _EmployeeGraphicWidgetState extends State<EmployeeGraphicWidget> {
         return Column(
           children: [
             Expanded(
-              flex: 1,
-              child: Text(
-                "Reservas por empleados",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Expanded(
-              flex: 9,
               child: Row(
                 children: [
                   Expanded(
@@ -81,9 +71,7 @@ class _EmployeeGraphicWidgetState extends State<EmployeeGraphicWidget> {
                         ),
                         centerSpaceRadius: 0,
                         sectionsSpace: 1,
-                        sections: List.generate(employeesNames.length, (
-                          index,
-                        ) {
+                        sections: List.generate(employeesNames.length, (index) {
                           return PieChartSectionData(
                             value: employessBookings[index].toDouble(),
                             color: _getColorFromId(employeesNames[index]),
@@ -105,7 +93,7 @@ class _EmployeeGraphicWidgetState extends State<EmployeeGraphicWidget> {
                       children: List.generate(employeesNames.length, (index) {
                         final idEmploye = employeesNames[index];
                         final color = _getColorFromId(idEmploye);
-        
+
                         return Row(
                           children: [
                             Container(
@@ -116,19 +104,16 @@ class _EmployeeGraphicWidgetState extends State<EmployeeGraphicWidget> {
                                 color: color,
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 6),
-                              child: Text(
-                                idEmploye.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: isTouched == index ? 18 : 14,
-                                  fontWeight:
-                                      isTouched == index
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                ),
-                                overflow: TextOverflow.ellipsis,
+                            Text(
+                              idEmploye.toUpperCase(),
+                              style: TextStyle(
+                                fontSize: isTouched == index ? 18 : 14,
+                                fontWeight:
+                                    isTouched == index
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                               ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         );

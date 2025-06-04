@@ -25,70 +25,65 @@ class ServicesGraphicWidget extends StatelessWidget {
         return Column(
           children: [
             Expanded(
-              flex: 1,
-              child: Text(
-                "Reservas por servicios",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Expanded(
-              flex: 9,
-              child: BarChart(
-                BarChartData(
-                  rotationQuarterTurns: 45,
-                  gridData: FlGridData(show: false),
-                  borderData: FlBorderData(
-                    show: true,
-                    border: Border(
-                      top: BorderSide.none,
-                      right: BorderSide.none,
-                      left: BorderSide(width: 1),
-                      bottom: BorderSide(width: 1),
-                    ),
-                  ),
-                  titlesData: FlTitlesData(
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        reservedSize: 50,
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          if (value.toInt() < 0 ||
-                              value.toInt() >= servicesNames.length) {
-                            return const SizedBox.shrink();
-                          }
-                          final serviceName = servicesNames[value.toInt()];
-                          return Transform.rotate(
-                            angle: -math.pi / 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                serviceName,
-                                style: const TextStyle(fontSize: 10),
-                              ),
-                            ),
-                          );
-                        },
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: BarChart(
+                  BarChartData(
+                    rotationQuarterTurns: 45,
+                    gridData: FlGridData(show: false),
+                    borderData: FlBorderData(
+                      show: true,
+                      border: Border(
+                        top: BorderSide.none,
+                        right: BorderSide.none,
+                        left: BorderSide(width: 1),
+                        bottom: BorderSide(width: 1),
                       ),
                     ),
-                  ),
-                  barGroups: List.generate(servicesBookings.length, (index) {
-                    return BarChartGroupData(
-                      x: index,
-                      barRods: [
-                        BarChartRodData(
-                          toY: servicesBookings[index].toDouble(),
-                          color: Colors.blue,
-                          width: 10,
+                    titlesData: FlTitlesData(
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          reservedSize: 50,
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            if (value.toInt() < 0 ||
+                                value.toInt() >= servicesNames.length) {
+                              return const SizedBox.shrink();
+                            }
+                            final serviceName = servicesNames[value.toInt()];
+                            return Transform.rotate(
+                              angle: -math.pi / 2,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  serviceName,
+                                  style: const TextStyle(fontSize: 10),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      ],
-                    );
-                  }),
+                      ),
+                    ),
+                    barGroups: List.generate(servicesBookings.length, (index) {
+                      return BarChartGroupData(
+                        x: index,
+                        barRods: [
+                          BarChartRodData(
+                            toY: servicesBookings[index].toDouble(),
+                            color: Colors.blue,
+                            width: 10,
+                          ),
+                        ],
+                      );
+                    }),
+                  ),
                 ),
               ),
             ),
