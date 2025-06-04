@@ -3,6 +3,7 @@ import 'package:tabla_reservary/nucleo/app_colores.dart';
 import 'package:tabla_reservary/nucleo/styles_textos.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:tabla_reservary/modelos/reserva.dart';
+import 'dart:io';
 
 /// Pantalla principal que muestra la tabla de reservas del local
 class PantallaReservas extends StatefulWidget {
@@ -216,8 +217,36 @@ class _PantallaReservasState extends State<PantallaReservas> {
     super.dispose();
   }
 
-  /// Carga datos de ejemplo para la tabla
+  /// Carga datos desde un archivo CSV
   void _cargarDatosEjemplo() {
+    // Ruta al archivo CSV
+    const String rutaCSV = 'contenido/empleados.csv';
+
+    try {
+      final File archivo = File(rutaCSV);
+      final List<String> lineas = archivo.readAsLinesSync();
+
+      // Ignorar la primera línea
+      for (int i = 1; i < lineas.length; i++) {
+        final List<String> datos = lineas[i].split(',');
+        if (datos.length >= 6) {
+          _reservas.add(
+            Reserva(
+              cliente: datos[0],
+              fecha: DateTime.parse(datos[1]),
+              estado: datos[2],
+              plataforma: datos[3],
+              empleado: datos[4],
+              servicios: datos[5],
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error al cargar el archivo CSV: $e');
+    }
+
+    // Código de ejemplo
     _reservas.addAll([
       Reserva(
         cliente: 'David Romero',
@@ -237,7 +266,7 @@ class _PantallaReservasState extends State<PantallaReservas> {
       ),
       Reserva(
         cliente: 'Cristina Romero',
-        fecha: DateTime.now().add(const Duration(days: 3)),
+        fecha: DateTime.now().add(const Duration(minutes: 30)),
         estado: 'Confirmada',
         plataforma: 'App',
         empleado: 'Carlos López',
@@ -245,11 +274,11 @@ class _PantallaReservasState extends State<PantallaReservas> {
       ),
       Reserva(
         cliente: 'Oscar Luis Romero',
-        fecha: DateTime.now().add(const Duration(days: 2)),
+        fecha: DateTime.now().add(const Duration(days: 6)),
         estado: 'Cancelada',
         plataforma: 'Web',
         empleado: 'Ana Martínez',
-        servicios: 'Cena amigos, mesa redonda, 6 personas',
+        servicios: 'Cena amigos, mesa redonda, 10 personas',
       ),
       Reserva(
         cliente: 'María Isabel Carpintero',
@@ -261,16 +290,40 @@ class _PantallaReservasState extends State<PantallaReservas> {
       ),
       Reserva(
         cliente: 'Pilar Martín',
-        fecha: DateTime.now().add(const Duration(hours: 4)),
+        fecha: DateTime.now().add(const Duration(days: 400)),
         estado: 'Pendiente',
         plataforma: 'App',
         empleado: 'Sofía Ruiz',
-        servicios: 'Cena familiar, menú infantil, 4 personas',
+        servicios: 'Cena familiar, menú infantil, 10 personas',
+      ),
+      Reserva(
+        cliente: 'Juan Pérez',
+        fecha: DateTime.now().add(const Duration(hours: 1)),
+        estado: 'Confirmada',
+        plataforma: 'Web',
+        empleado: 'Juan Pérez',
+        servicios: 'Maquina de billar, 1 persona, 1 hora',
+      ),
+      Reserva(
+        cliente: 'Isabel Ayuso Diaz',
+        fecha: DateTime.now().add(const Duration(minutes: 40)),
+        estado: 'Confirmada',
+        plataforma: 'Teléfono',
+        empleado: 'Pedro Sánchez',
+        servicios: 'Maceta para petunias, cesta de frutas, venta de macetas',
+      ),
+      Reserva(
+        cliente: 'Abiscalo Santiago',
+        fecha: DateTime.now().add(const Duration(days: 12)),
+        estado: 'Confirmada',
+        plataforma: 'App',
+        empleado: 'Luis García',
+        servicios: 'Prueba de traje de novio, 2 personas',
       ),
     ]);
   }
 
-  /// Ordena las reservas según la columna seleccionada
+  /// Ordena las reservas
   void _sort<T>(
     Comparable<T> Function(Reserva r) getField,
     int columnIndex,
@@ -300,7 +353,7 @@ class _PantallaReservasState extends State<PantallaReservas> {
     });
   }
 
-  /// Formatea la fecha en un formato legible
+  /// Formatea la fecha
   String _formatearFecha(DateTime fecha) {
     final meses = [
       'Enero',
@@ -319,31 +372,30 @@ class _PantallaReservasState extends State<PantallaReservas> {
     return '${fecha.day} de ${meses[fecha.month - 1]} de ${fecha.year}';
   }
 
-  /// Filtra las reservas según el texto de búsqueda
+  /// Filtra las reservas
   void _filterReservas(String query) {
     setState(() {
       if (query.isEmpty) {
         _filteredReservas = List.from(_reservas);
       } else {
-        _filteredReservas =
-            _reservas.where((reserva) {
-              return reserva.cliente.toLowerCase().contains(
+        _filteredReservas = _reservas.where((reserva) {
+          return reserva.cliente.toLowerCase().contains(
                     query.toLowerCase(),
                   ) ||
-                  reserva.estado.toLowerCase().contains(query.toLowerCase()) ||
-                  reserva.plataforma.toLowerCase().contains(
+              reserva.estado.toLowerCase().contains(query.toLowerCase()) ||
+              reserva.plataforma.toLowerCase().contains(
                     query.toLowerCase(),
                   ) ||
-                  reserva.empleado.toLowerCase().contains(
+              reserva.empleado.toLowerCase().contains(
                     query.toLowerCase(),
                   ) ||
-                  reserva.servicios.toLowerCase().contains(
+              reserva.servicios.toLowerCase().contains(
                     query.toLowerCase(),
                   ) ||
-                  _formatearFecha(
-                    reserva.fecha,
-                  ).toLowerCase().contains(query.toLowerCase());
-            }).toList();
+              _formatearFecha(
+                reserva.fecha,
+              ).toLowerCase().contains(query.toLowerCase());
+        }).toList();
       }
 
       // Mantener el ordenamiento actual después de filtrar
@@ -387,7 +439,7 @@ class _PantallaReservasState extends State<PantallaReservas> {
     return Scaffold(
       backgroundColor: AppColores.fondo,
       appBar: AppBar(
-        title: Text('Reservas', style: StylesTextos.titulo),
+        title: const Text('Reservas', style: StylesTextos.titulo),
         backgroundColor: AppColores.primaria,
         actions: [
           // Campo de búsqueda
@@ -417,7 +469,7 @@ class _PantallaReservasState extends State<PantallaReservas> {
               onChanged: _filterReservas,
             ),
           ),
-          // Botón de ajustes para la visibilidad de columnas
+          // Botón de ajustes kpara habilitar la vista de las columnas
           PopupMenuButton<String>(
             icon: const Icon(Icons.settings, color: Colors.white),
             onSelected: (String column) {
@@ -425,119 +477,106 @@ class _PantallaReservasState extends State<PantallaReservas> {
                 _columnVisibility[column] = !_columnVisibility[column]!;
               });
             },
-            itemBuilder:
-                (BuildContext context) => [
-                  PopupMenuItem<String>(
-                    value: 'fecha',
-                    child: Row(
-                      children: [
-                        Icon(
-                          _columnVisibility['fecha']!
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: AppColores.primaria,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text('Fecha'),
-                      ],
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem<String>(
+                value: 'fecha',
+                child: Row(
+                  children: [
+                    Icon(
+                      _columnVisibility['fecha']!
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColores.primaria,
                     ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'estado',
-                    child: Row(
-                      children: [
-                        Icon(
-                          _columnVisibility['estado']!
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: AppColores.primaria,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text('Estado'),
-                      ],
+                    const SizedBox(width: 8),
+                    const Text('Fecha'),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'estado',
+                child: Row(
+                  children: [
+                    Icon(
+                      _columnVisibility['estado']!
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColores.primaria,
                     ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'plataforma',
-                    child: Row(
-                      children: [
-                        Icon(
-                          _columnVisibility['plataforma']!
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: AppColores.primaria,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text('Plataforma'),
-                      ],
+                    const SizedBox(width: 8),
+                    const Text('Estado'),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'plataforma',
+                child: Row(
+                  children: [
+                    Icon(
+                      _columnVisibility['plataforma']!
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColores.primaria,
                     ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'empleado',
-                    child: Row(
-                      children: [
-                        Icon(
-                          _columnVisibility['empleado']!
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: AppColores.primaria,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text('Empleado'),
-                      ],
+                    const SizedBox(width: 8),
+                    const Text('Plataforma'),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'empleado',
+                child: Row(
+                  children: [
+                    Icon(
+                      _columnVisibility['empleado']!
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColores.primaria,
                     ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'cliente',
-                    child: Row(
-                      children: [
-                        Icon(
-                          _columnVisibility['cliente']!
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: AppColores.primaria,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text('Cliente'),
-                      ],
+                    const SizedBox(width: 8),
+                    const Text('Empleado'),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'cliente',
+                child: Row(
+                  children: [
+                    Icon(
+                      _columnVisibility['cliente']!
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColores.primaria,
                     ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'servicios',
-                    child: Row(
-                      children: [
-                        Icon(
-                          _columnVisibility['servicios']!
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: AppColores.primaria,
-                        ),
-                        const SizedBox(width: 8),
-                        const Text('Servicios'),
-                      ],
+                    const SizedBox(width: 8),
+                    const Text('Cliente'),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'servicios',
+                child: Row(
+                  children: [
+                    Icon(
+                      _columnVisibility['servicios']!
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: AppColores.primaria,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    const Text('Servicios'),
+                  ],
+                ),
+              ),
+            ],
           ),
-          // Botón para eliminar las reservas seleccionadas
-          if (_selectedReservas.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.white),
-              onPressed: () {
-                setState(() {
-                  _reservas.removeWhere((r) => _selectedReservas.contains(r));
-                  _selectedReservas.clear();
-                });
-              },
-            ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Card(
           elevation: 4,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 800),
+          child: SizedBox.expand(
             child: DataTable2(
               minWidth: 800,
               columnSpacing: 12,
@@ -562,89 +601,126 @@ class _PantallaReservasState extends State<PantallaReservas> {
                 borderRadius: BorderRadius.circular(8),
               ),
               showCheckboxColumn: false,
-              columns:
-                  _columnas.map((columna) {
-                    return DataColumn2(
-                      label: columna.label,
-                      size: columna.size,
-                    );
-                  }).toList(),
-              rows:
-                  _filteredReservas.map((reserva) {
-                    final isSelected = _selectedReservas.contains(reserva);
-                    return DataRow2(
-                      selected: isSelected,
-                      onSelectChanged: (selected) {
-                        setState(() {
-                          if (selected == true) {
-                            _selectedReservas.add(reserva);
-                          } else {
-                            _selectedReservas.remove(reserva);
-                          }
-                        });
-                      },
-                      cells: [
-                        if (_columnVisibility['fecha']!)
-                          DataCell(
-                            Tooltip(
-                              message: _formatearFecha(reserva.fecha),
-                              child: Text(
-                                _formatearFecha(reserva.fecha),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
+              columns: _columnas.map((columna) {
+                return DataColumn2(
+                  label: columna.label,
+                  size: columna.size,
+                );
+              }).toList(),
+              rows: _filteredReservas.map((reserva) {
+                final isSelected = _selectedReservas.contains(reserva);
+                return DataRow2(
+                  selected: isSelected,
+                  onSelectChanged: (selected) {
+                    setState(() {
+                      if (selected == true) {
+                        _selectedReservas.clear();
+                        _selectedReservas.add(reserva);
+                        _mostrarDialogoInformacion(reserva);
+                      } else {
+                        _selectedReservas.remove(reserva);
+                      }
+                    });
+                  },
+                  cells: [
+                    if (_columnVisibility['fecha']!)
+                      DataCell(
+                        Tooltip(
+                          message: _formatearFecha(reserva.fecha),
+                          child: Text(
+                            _formatearFecha(reserva.fecha),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                           ),
-                        if (_columnVisibility['estado']!)
-                          DataCell(
-                            Text(
-                              reserva.estado,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                        if (_columnVisibility['plataforma']!)
-                          DataCell(
-                            Text(
-                              reserva.plataforma,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                        if (_columnVisibility['empleado']!)
-                          DataCell(
-                            Text(
-                              reserva.empleado,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                        if (_columnVisibility['cliente']!)
-                          DataCell(
-                            Tooltip(
-                              message: reserva.cliente,
-                              child: Text(
-                                reserva.cliente,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                          ),
-                        if (_columnVisibility['servicios']!)
-                          DataCell(
-                            Text(
-                              reserva.servicios,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                      ],
-                    );
-                  }).toList(),
+                        ),
+                      ),
+                    if (_columnVisibility['estado']!)
+                      DataCell(
+                        Text(
+                          reserva.estado,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                    if (_columnVisibility['plataforma']!)
+                      DataCell(
+                        Text(
+                          reserva.plataforma,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                    if (_columnVisibility['empleado']!)
+                      DataCell(
+                        Text(
+                          reserva.empleado,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                    if (_columnVisibility['cliente']!)
+                      DataCell(
+                        Text(
+                          reserva.cliente,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                    if (_columnVisibility['servicios']!)
+                      DataCell(
+                        Text(
+                          reserva.servicios,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                  ],
+                );
+              }).toList(),
+              empty: const Center(
+                child: Text('No hay reservas disponibles'),
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  /// Muestra un diálogo con la información de la reserva seleccionada
+  void _mostrarDialogoInformacion(Reserva reserva) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Información de la Reserva'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Cliente: ${reserva.cliente}'),
+                Text('Fecha: ${_formatearFecha(reserva.fecha)}'),
+                Text('Estado: ${reserva.estado}'),
+                Text('Plataforma: ${reserva.plataforma}'),
+                Text('Empleado: ${reserva.empleado}'),
+                Text('Servicios: ${reserva.servicios}'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _selectedReservas.remove(reserva);
+                });
+              },
+              child: const Text('Cerrar'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
