@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Clase que representa un mensaje del chat
 class ChatMessage {
   final String sender;
   final String message;
@@ -64,7 +63,7 @@ class _ChatScreenState extends State<ChatScreen> {
           title: const Text('¿Cómo te llamas?'),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(hintText: 'Escribe tu nombre'),
+            decoration: const InputDecoration(hintText: 'Escribe tu nombre de usuario'),
           ),
           actions: [
             TextButton(
@@ -136,7 +135,7 @@ newMessages.sort((a, b) =>
     }
   }
 
-  // Envía un mensaje al servidor
+  // Envía un mensaje al servidor de Wordpress
   Future<void> _sendMessage(String text) async {
     try {
       final response = await http.post(
