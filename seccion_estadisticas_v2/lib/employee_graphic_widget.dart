@@ -24,18 +24,20 @@ class _EmployeeGraphicWidgetState extends State<EmployeeGraphicWidget> {
     return ListenableBuilder(
       listenable: widget.viewModel,
       builder: (context, _) {
-        final selectedEmployeeId = widget.viewModel.selectedEmployeeId;
-        final employeesData = widget.viewModel.filteredStats?.totalBookingsPerEmployee ?? widget.viewModel.totalBookingsPerEmployee;
+        final selectedEmployeeIds = widget.viewModel.selectedEmployeeIds;
+        final employeesData =
+            widget.viewModel.filteredStats?.totalBookingsPerEmployee ??
+            widget.viewModel.totalBookingsPerEmployee;
 
         final employeesNames =
-            selectedEmployeeId != null
-                ? [selectedEmployeeId]
+            selectedEmployeeIds.isNotEmpty
+                ? selectedEmployeeIds
                 : employeesData.keys.toList();
         final employessBookings =
-            selectedEmployeeId != null
-                ? [
-                  employeesData[selectedEmployeeId] ?? 0,
-                ]
+            selectedEmployeeIds.isNotEmpty
+                ? selectedEmployeeIds
+                    .map((id) => employeesData[id] ?? 0)
+                    .toList()
                 : employeesData.values.toList();
 
         if (employeesNames.isEmpty || employessBookings.isEmpty) {
@@ -43,6 +45,11 @@ class _EmployeeGraphicWidgetState extends State<EmployeeGraphicWidget> {
         }
         return Column(
           children: [
+            Text(
+              "Reservas por empleado",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
             Expanded(
               child: Row(
                 children: [
@@ -74,6 +81,12 @@ class _EmployeeGraphicWidgetState extends State<EmployeeGraphicWidget> {
                         sections: List.generate(employeesNames.length, (index) {
                           return PieChartSectionData(
                             value: employessBookings[index].toDouble(),
+                            titleStyle: TextStyle(
+                              fontWeight:
+                                  isTouched == index
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                            ),
                             color: _getColorFromId(employeesNames[index]),
                             radius: isTouched == index ? 120 : 110,
                             borderSide: BorderSide(

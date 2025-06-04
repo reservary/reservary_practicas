@@ -21,13 +21,10 @@ class _StatusGraphicWidgetState extends State<StatusGraphicWidget> {
     final List<int> statusValues = totalBookingsByStatus.values.toList();
     return Column(
       children: [
-        Expanded(
-          flex: 1,
-          child: Text(
-            "Reservas por estado",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            overflow: TextOverflow.ellipsis,
-          ),
+        Text(
+          "Reservas por estado",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          overflow: TextOverflow.ellipsis,
         ),
         Expanded(
           flex: 9,
@@ -65,12 +62,9 @@ class _StatusGraphicWidgetState extends State<StatusGraphicWidget> {
                             sections: List.generate(status.length, (index) {
                               return PieChartSectionData(
                                 value: statusValues[index].toDouble(),
-                                title:
-                                    isTouched == index
-                                        ? "${statusValues[index]}"
-                                        : "",
+                                title:"${statusValues[index]}",
                                 titleStyle: TextStyle(
-                                  fontWeight: FontWeight.w900,
+                                  fontWeight: isTouched == index ? FontWeight.bold : FontWeight.normal,
                                 ),
                                 color: _getColorByStatus(status[index]),
                                 radius: isTouched == index ? 120 : 110,

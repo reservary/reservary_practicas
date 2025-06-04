@@ -32,6 +32,8 @@ class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
         
         return Column(
           children: [
+            Text("Progreso",style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          overflow: TextOverflow.ellipsis,),
             Expanded(
               child: SizedBox(
                 child: Padding(

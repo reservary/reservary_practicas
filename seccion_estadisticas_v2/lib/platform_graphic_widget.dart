@@ -20,13 +20,10 @@ class _PlatformGraphicWidgetState extends State<PlatformGraphicWidget> {
     final List<int> numBookings = totalBookingsPerPlatform.values.toList();
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 16,left: 16,right: 16,bottom: 8),
-          child: Text(
-            "Reservas por plataforma",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            overflow: TextOverflow.ellipsis,
-          ),
+        Text(
+          "Reservas por plataforma",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          overflow: TextOverflow.ellipsis,
         ),
         Expanded(
           child: Padding(
@@ -55,7 +52,10 @@ class _PlatformGraphicWidgetState extends State<PlatformGraphicWidget> {
                 sections: List.generate(numBookings.length, (index) {
                   return PieChartSectionData(
                     value: numBookings[index].toDouble(),
-                    title: isTouched == index ? "${numBookings[index]}" : "",
+                    title: "${numBookings[index]}",
+                    titleStyle: TextStyle(
+                      fontWeight: isTouched == index ? FontWeight.bold : FontWeight.normal,
+                    ),
                     color: _getColorPerPlatform(namePlatform[index]),
                     radius: isTouched == index ? 60 : 50,
                     borderSide: BorderSide(width: isTouched == index ? 3 : 0),

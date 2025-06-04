@@ -24,6 +24,11 @@ class ServicesGraphicWidget extends StatelessWidget {
 
         return Column(
           children: [
+            Text(
+              "Reservas por servicios",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -71,7 +76,9 @@ class ServicesGraphicWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    barGroups: List.generate(servicesBookings.length, (index) {
+                    barGroups: List.generate(servicesBookings.length, (
+                      index,
+                    ) {
                       return BarChartGroupData(
                         x: index,
                         barRods: [

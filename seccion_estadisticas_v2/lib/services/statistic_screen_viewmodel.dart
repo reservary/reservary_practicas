@@ -12,7 +12,7 @@ class StatisticsScreenViewModel extends ChangeNotifier {
   DateTime? _initDate;
   DateTime? _endDate;
   final _dateFormat = DateFormat('dd/MM/yyyy');
-  String? _selectedEmployeeId;
+  List<String> _selectedEmployeeIds = [];
   bool _isLoading = false;
   List<String> _selectedServices = [];
 
@@ -20,7 +20,7 @@ class StatisticsScreenViewModel extends ChangeNotifier {
   DateTime? get endDate => _endDate;
   bool get isLoading => _isLoading;
   List<String> get selectedServices => _selectedServices;
-  String? get selectedEmployeeId => _selectedEmployeeId;
+  List<String> get selectedEmployeeIds => _selectedEmployeeIds;
   Statistics? get originalStats => _originalStats;
   Statistics? get filteredStats => _filteredStats;
 
@@ -84,7 +84,15 @@ class StatisticsScreenViewModel extends ChangeNotifier {
   }
 
   void selectEmployee(String? employeeId) {
-    _selectedEmployeeId = employeeId;
+    if (employeeId == null) {
+      _selectedEmployeeIds = [];
+    } else {
+      if (_selectedEmployeeIds.contains(employeeId)) {
+        _selectedEmployeeIds.remove(employeeId);
+      } else {
+        _selectedEmployeeIds.add(employeeId);
+      }
+    }
     notifyListeners();
   }
 
@@ -181,7 +189,7 @@ class StatisticsScreenViewModel extends ChangeNotifier {
     }
     if (employeeId == null) {
       _filteredStats = _originalStats;
-      _selectedEmployeeId = null;
+      _selectedEmployeeIds = [];
       notifyListeners();
       return _filteredStats!;
     }
@@ -197,7 +205,7 @@ class StatisticsScreenViewModel extends ChangeNotifier {
       totalBookingsPerService: _originalStats!.totalBookingsPerService,
       totalBookingsPerPlatform: _originalStats!.totalBookingsPerPlatform,
     );
-    _selectedEmployeeId = employeeId;
+    _selectedEmployeeIds = [employeeId];
     notifyListeners();
     return _filteredStats!;
   }
