@@ -100,18 +100,19 @@ class _ChatScreenState extends State<ChatScreen> {
       final response = await http.get(Uri.parse(_urlMensajes));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        final newMessages =
-            data
-                .map((msg) {
-                  return ChatMessage(
-                    sender: msg['nombre'] ?? 'Desconocido',
-                    message: msg['mensaje'],
-                    fecha: msg['fecha'],
-                  );
-                })
-                .toList()
-                .reversed
-                .toList(); // Los invertimos para mostrar los más nuevos al final
+        final newMessages = data
+    .map((msg) => ChatMessage(
+          sender: msg['nombre'] ?? 'Desconocido',
+          message: msg['mensaje'],
+          fecha: msg['fecha'],
+        ))
+    .toList();
+
+// Ordena por fecha ascendente
+newMessages.sort((a, b) =>
+    DateTime.parse(a.fecha).compareTo(DateTime.parse(b.fecha)));
+
+
 
         if (mounted) {
           setState(() {
