@@ -15,7 +15,9 @@ class _PlatformGraphicWidgetState extends State<PlatformGraphicWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final totalBookingsPerPlatform = widget.viewModel.filteredStats?.totalBookingsPerPlatform??widget.viewModel.totalBookingsPerPlatform;
+    final totalBookingsPerPlatform =
+        widget.viewModel.filteredStats?.totalBookingsPerPlatform ??
+        widget.viewModel.totalBookingsPerPlatform;
     final List<String> namePlatform = totalBookingsPerPlatform.keys.toList();
     final List<int> numBookings = totalBookingsPerPlatform.values.toList();
     return Column(
@@ -27,7 +29,12 @@ class _PlatformGraphicWidgetState extends State<PlatformGraphicWidget> {
         ),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.only(top: 8,left: 16,right: 16,bottom: 16),
+            padding: const EdgeInsets.only(
+              top: 8,
+              left: 16,
+              right: 16,
+              bottom: 16,
+            ),
             child: PieChart(
               PieChartData(
                 centerSpaceRadius: 55,
@@ -43,9 +50,7 @@ class _PlatformGraphicWidgetState extends State<PlatformGraphicWidget> {
                         return;
                       }
                       isTouched =
-                          pieTouchResponse
-                              .touchedSection!
-                              .touchedSectionIndex;
+                          pieTouchResponse.touchedSection!.touchedSectionIndex;
                     });
                   },
                 ),
@@ -54,7 +59,10 @@ class _PlatformGraphicWidgetState extends State<PlatformGraphicWidget> {
                     value: numBookings[index].toDouble(),
                     title: "${numBookings[index]}",
                     titleStyle: TextStyle(
-                      fontWeight: isTouched == index ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          isTouched == index
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                     ),
                     color: _getColorPerPlatform(namePlatform[index]),
                     radius: isTouched == index ? 60 : 50,
@@ -96,13 +104,13 @@ class _PlatformGraphicWidgetState extends State<PlatformGraphicWidget> {
 
   Color _getColorPerPlatform(String nomPlatform) {
     switch (nomPlatform.toLowerCase()) {
-      case 'ios':
+      case 'client':
         return Colors.grey;
-      case 'android':
+      case 'dashboard':
         return Colors.green;
-      case 'adminweb':
+      case 'clientandroid':
         return Colors.blue;
-      case 'clienteweb':
+      case 'clientweb':
         return Colors.lime;
       default:
         return Colors.red;
@@ -111,14 +119,16 @@ class _PlatformGraphicWidgetState extends State<PlatformGraphicWidget> {
 
   String _getStringPerPlatform(String nomPlatform) {
     switch (nomPlatform.toLowerCase()) {
-      case 'ios':
-        return 'iOS';
-      case 'android':
-        return 'Android';
-      case 'adminweb':
-        return 'Admin web';
-      case 'clienteweb':
+      case 'client':
+        return 'client';
+      case 'dashboard':
+        return 'dashboard';
+      case 'clientandroid':
+        return ' Android';
+      case 'clientweb':
         return 'Cliente web';
+      case 'clientIOS':
+        return 'IOS';
       default:
         return 'Not defined';
     }

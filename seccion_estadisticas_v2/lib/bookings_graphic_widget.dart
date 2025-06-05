@@ -77,31 +77,31 @@ class _BookingsGraphicWidgetState extends State<BookingsGraphicWidget> {
                             reservedSize: 25,
                           ),
                         ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            minIncluded: true,
-                            showTitles: true,
-                            reservedSize: 20,
-                            interval: 1,
-                            getTitlesWidget: (value, meta) {
-                              final index = value.toInt();
-                              if (index >= 0 && index < _filteredProgress.length) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: Text(
-                                    widget.viewModel.formatDateFromString(
-                                      _filteredProgress[index].date,
-                                    ),
-                                    style: TextStyle(fontSize: 12),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                );
-                              }
-                              return Text("");
-                            },
-                          ),
-                        ),
-                        show: true,
+                        // bottomTitles: AxisTitles(
+                        //   sideTitles: SideTitles(
+                        //     minIncluded: true,
+                        //     showTitles: true,
+                        //     reservedSize: 20,
+                        //     interval: 1,
+                        //     getTitlesWidget: (value, meta) {
+                        //       final index = value.toInt();
+                        //       if (index >= 0 && index < _filteredProgress.length) {
+                        //         return Padding(
+                        //           padding: const EdgeInsets.only(top: 5),
+                        //           child: Text(
+                        //             widget.viewModel.formatDateFromString(
+                        //               _filteredProgress[index].date,
+                        //             ),
+                        //             style: TextStyle(fontSize: 12),
+                        //             overflow: TextOverflow.ellipsis,
+                        //           ),
+                        //         );
+                        //       }
+                        //       return Text("");
+                        //     },
+                        //   ),
+                        // ),
+                        show: false,
                       ),
                       extraLinesData: ExtraLinesData(
                         horizontalLines: [

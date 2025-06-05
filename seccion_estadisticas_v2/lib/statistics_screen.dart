@@ -43,7 +43,18 @@ class _StatisticsScreen extends State<StatisticsScreen> {
         _startDate = selectedRange.start;
         _endDate = selectedRange.end;
       });
-      widget.viewModel.filteredByDate(_startDate, _endDate);
+      int startTimestamp = widget.viewModel.dateTimeToTimeStamp(
+        selectedRange.start,
+      );
+      int endTimestamp = widget.viewModel.dateTimeToTimeStamp(
+        selectedRange.end,
+      );
+
+      print(startTimestamp);
+      print(endTimestamp);
+      if (_startDate != null && _endDate != null) {
+        await widget.viewModel.filteredByDate(_startDate, _endDate);
+      }
     }
   }
 
@@ -197,7 +208,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                             Padding(
                               padding: const EdgeInsets.only(
                                 top: 24,
-                                bottom:8,
+                                bottom: 8,
                                 left: 24,
                                 right: 6,
                               ),
@@ -249,7 +260,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                                 top: 24,
                                 bottom: 8,
                                 left: 6,
-                                right: 24,
+                                right: 12,
                               ),
                               child: IconButton(
                                 onPressed: () {
@@ -290,7 +301,8 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                             if (widget.viewModel.selectedEmployeeIds.length !=
                                 1) ...[
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.65,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.65,
                                 child: Padding(
                                   padding: const EdgeInsets.all(24.0),
                                   child: EmployeeGraphicWidget(
@@ -311,7 +323,8 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                             if (widget.viewModel.selectedServices.length !=
                                 1) ...[
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.5,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.5,
                                 child: Padding(
                                   padding: const EdgeInsets.all(24.0),
                                   child: ServicesGraphicWidget(
@@ -459,7 +472,7 @@ class _StatisticsScreen extends State<StatisticsScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.65,
+                          height: MediaQuery.of(context).size.height * 0.55,
                           child: Row(
                             children: [
                               Expanded(

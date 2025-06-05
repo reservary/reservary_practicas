@@ -24,3 +24,6 @@ flutter:
   assets:
     - assets/icons/ios.png
     - assets/data/data.json
+    - assets/data/ReservasFiltradasPorIDEmpleado.json
+    - assets/data/ReservasFiltradasPorIdEmpresa.json
+    - assets/data/ReservasFiltradasPorTelefono.json

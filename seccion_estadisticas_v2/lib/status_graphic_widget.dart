@@ -16,7 +16,9 @@ class _StatusGraphicWidgetState extends State<StatusGraphicWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final totalBookingsByStatus = widget.viewModel.filteredStats?.totalBookingsByStatus?? widget.viewModel.totalBookingsByStatus;
+    final totalBookingsByStatus =
+        widget.viewModel.filteredStats?.totalBookingsByStatus ??
+        widget.viewModel.totalBookingsByStatus;
     final List<String> status = totalBookingsByStatus.keys.toList();
     final List<int> statusValues = totalBookingsByStatus.values.toList();
     return Column(
@@ -62,9 +64,12 @@ class _StatusGraphicWidgetState extends State<StatusGraphicWidget> {
                             sections: List.generate(status.length, (index) {
                               return PieChartSectionData(
                                 value: statusValues[index].toDouble(),
-                                title:"${statusValues[index]}",
+                                title: "${statusValues[index]}",
                                 titleStyle: TextStyle(
-                                  fontWeight: isTouched == index ? FontWeight.bold : FontWeight.normal,
+                                  fontWeight:
+                                      isTouched == index
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
                                 ),
                                 color: _getColorByStatus(status[index]),
                                 radius: isTouched == index ? 120 : 110,
@@ -131,10 +136,12 @@ class _StatusGraphicWidgetState extends State<StatusGraphicWidget> {
 
   Color _getColorByStatus(String status) {
     switch (status.toLowerCase()) {
-      case 'completed':
+      case 'done':
         return Colors.green;
-      case 'pending':
+      case 'created':
         return Colors.blue;
+      case 'verified':
+        return Colors.yellowAccent;
       case 'cancelled':
         return Colors.red;
       default:

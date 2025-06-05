@@ -144,11 +144,11 @@ class _EmployeeGraphicWidgetState extends State<EmployeeGraphicWidget> {
 
   Color _getColorFromId(String id) {
     switch (id) {
-      case '123456':
+      case '6':
         return Colors.blue;
-      case '123457':
+      case '7':
         return Colors.red;
-      case '123458':
+      case '8':
         return Colors.green;
       default:
         return Colors.grey;
