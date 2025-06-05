@@ -1,0 +1,376 @@
+[
+  {
+    "bookingId": "1709209877159238",
+    "status": "created",
+    "timestamp": "1709391600000",
+    "endTimestamp": "1709393400000",
+    "userData": [
+      {
+        "id": "1",
+        "required": "true",
+        "name": "Nombre",
+        "value": "Daniel guerra",
+        "dataType": "text"
+      },
+      {
+        "id": "2",
+        "required": "true",
+        "name": "Teléfono",
+        "value": "664184567",
+        "countryCode": "ES",
+        "dialCode": "+34",
+        "type": "mobile"
+      },
+      {
+        "id": "3",
+        "required": "false",
+        "name": "Email",
+        "value": "danywar1995@hotmail.com",
+        "dataType": "mail"
+      }
+    ],
+    "companyId": "anthares_barber",
+    "employeeId": "6",
+    "origin": "client"
+  },
+  {
+    "bookingId": "1709578875459947",
+    "status": "created",
+    "timestamp": "1709994600000",
+    "endTimestamp": "1709997300000",
+    "userData": [
+      {
+        "id": "1",
+        "required": "true",
+        "name": "Nombre",
+        "value": "Dani guerra",
+        "dataType": "text"
+      },
+      {
+        "id": "2",
+        "required": "true",
+        "name": "Teléfono",
+        "value": "664184567",
+        "countryCode": "ES",
+        "dialCode": "+34",
+        "type": "mobile"
+      },
+      {
+        "id": "3",
+        "required": "false",
+        "name": "Email",
+        "value": "danywar1995@hotmail.com",
+        "dataType": "mail"
+      }
+    ],
+    "companyId": "anthares_barber",
+    "employeeId": "6",
+    "origin": "client"
+  },
+  {
+    "bookingId": "1711997641327617",
+    "status": "created",
+    "timestamp": "1713018600000",
+    "endTimestamp": "1713020400000",
+    "userData": [
+      {
+        "id": "1",
+        "required": "true",
+        "name": "Nombre",
+        "value": "Dani Guerra ",
+        "dataType": "text"
+      },
+      {
+        "id": "2",
+        "required": "true",
+        "name": "Teléfono",
+        "value": "664184567",
+        "countryCode": "ES",
+        "dialCode": "+34",
+        "type": "mobile"
+      },
+      {
+        "id": "3",
+        "required": "false",
+        "name": "Email",
+        "value": "danywar1995@hotmail.com",
+        "dataType": "mail"
+      }
+    ],
+    "companyId": "anthares_barber",
+    "employeeId": "6",
+    "origin": "client"
+  },
+  {
+    "bookingId": "1713859640550323",
+    "status": "created",
+    "timestamp": "1714813200000",
+    "endTimestamp": "1714815900000",
+    "userData": [
+      {
+        "id": "1",
+        "required": "true",
+        "name": "Nombre",
+        "value": "Daniel Guerra",
+        "dataType": "text"
+      },
+      {
+        "id": "2",
+        "required": "true",
+        "name": "Teléfono",
+        "value": "664184567",
+        "countryCode": "ES",
+        "dialCode": "+34",
+        "type": "mobile"
+      },
+      {
+        "id": "3",
+        "required": "false",
+        "name": "Email",
+        "value": "danywar1995@hotmail.com",
+        "dataType": "mail"
+      }
+    ],
+    "companyId": "anthares_barber",
+    "employeeId": "6",
+    "origin": "client"
+  },
+  {
+    "bookingId": "1716154505570797",
+    "status": "created",
+    "timestamp": "1717232400000",
+    "endTimestamp": "1717235100000",
+    "userData": [
+      {
+        "id": "1",
+        "required": "true",
+        "name": "Nombre",
+        "value": "Daniel guerra",
+        "dataType": "text"
+      },
+      {
+        "id": "2",
+        "required": "true",
+        "name": "Teléfono",
+        "value": "664184567",
+        "countryCode": "ES",
+        "dialCode": "+34",
+        "type": "mobile"
+      },
+      {
+        "id": "3",
+        "required": "false",
+        "name": "Email",
+        "value": "danywar1995@hotmail.com",
+        "dataType": "mail"
+      }
+    ],
+    "companyId": "anthares_barber",
+    "employeeId": "6",
+    "origin": "clientWeb"
+  },
+  {
+    "bookingId": "1718005529212209",
+    "status": "created",
+    "timestamp": "1718359200000",
+    "endTimestamp": "1718361900000",
+    "userData": [
+      {
+        "id": "1",
+        "required": "true",
+        "name": "Nombre",
+        "value": "Daniel guerra",
+        "dataType": "text"
+      },
+      {
+        "id": "2",
+        "required": "true",
+        "name": "Teléfono",
+        "value": "664184567",
+        "countryCode": "ES",
+        "dialCode": "+34",
+        "type": "mobile"
+      },
+      {
+        "id": "3",
+        "required": "false",
+        "name": "Email",
+        "value": "danywar1995@hotmail.com",
+        "dataType": "mail"
+      }
+    ],
+    "companyId": "anthares_barber",
+    "employeeId": "6",
+    "origin": "clientWeb"
+  },
+  {
+    "bookingId": "1719868496052861",
+    "status": "cancelled",
+    "timestamp": "1720256400000",
+    "endTimestamp": "1720259100000",
+    "userData": [
+      {
+        "id": "1",
+        "required": "true",
+        "name": "Nombre",
+        "value": "Daniel guerra",
+        "dataType": "text"
+      },
+      {
+        "id": "2",
+        "required": "true",
+        "name": "Teléfono",
+        "value": "664184567",
+        "countryCode": "ES",
+        "dialCode": "+34",
+        "type": "mobile"
+      },
+      {
+        "id": "3",
+        "required": "false",
+        "name": "Email",
+        "value": "danywar1995@hotmail.com",
+        "dataType": "mail"
+      }
+    ],
+    "companyId": "anthares_barber",
+    "employeeId": "6",
+    "origin": "clientWeb"
+  },
+  {
+    "bookingId": "1720687807485669",
+    "status": "created",
+    "timestamp": "1721466000000",
+    "endTimestamp": "1721468700000",
+    "userData": [
+      {
+        "id": "1",
+        "required": "true",
+        "name": "Nombre",
+        "value": "Daniel Guerra ",
+        "dataType": "text"
+      },
+      {
+        "id": "2",
+        "required": "true",
+        "name": "Teléfono",
+        "value": "664184567",
+        "countryCode": "ES",
+        "dialCode": "+34",
+        "type": "mobile"
+      },
+      {
+        "id": "3",
+        "required": "false",
+        "name": "Email",
+        "value": "danywar1995@hotmail.com",
+        "dataType": "mail"
+      }
+    ],
+    "companyId": "anthares_barber",
+    "employeeId": "6",
+    "origin": "clientWeb"
+  },
+  {
+    "bookingId": "1722348484750212",
+    "status": "created",
+    "timestamp": "1722599100000",
+    "endTimestamp": "1722600900000",
+    "userData": [
+      {
+        "id": "1",
+        "required": "true",
+        "name": "Nombre",
+        "value": "Daniel Guerra ",
+        "dataType": "text"
+      },
+      {
+        "id": "2",
+        "required": "true",
+        "name": "Teléfono",
+        "value": "664184567",
+        "countryCode": "ES",
+        "dialCode": "+34",
+        "type": "mobile"
+      },
+      {
+        "id": "3",
+        "required": "false",
+        "name": "Email",
+        "value": "danywar1995@hotmail.com",
+        "dataType": "mail"
+      }
+    ],
+    "companyId": "anthares_barber",
+    "employeeId": "6",
+    "origin": "clientWeb"
+  },
+  {
+    "bookingId": "1723741701961122",
+    "status": "created",
+    "timestamp": "1724490000000",
+    "endTimestamp": "1724492700000",
+    "userData": [
+      {
+        "id": "1",
+        "required": "true",
+        "name": "Nombre",
+        "value": "Daniel guerra",
+        "dataType": "text"
+      },
+      {
+        "id": "2",
+        "required": "true",
+        "name": "Teléfono",
+        "value": "664184567",
+        "countryCode": "ES",
+        "dialCode": "+34",
+        "type": "mobile"
+      },
+      {
+        "id": "3",
+        "required": "false",
+        "name": "Email",
+        "value": "danywar199@.hotmail.com",
+        "dataType": "mail"
+      }
+    ],
+    "companyId": "anthares_barber",
+    "employeeId": "7",
+    "origin": "clientWeb"
+  },
+  {
+    "bookingId": "1725601139347636",
+    "status": "created",
+    "timestamp": "1725719400000",
+    "endTimestamp": "1725722100000",
+    "userData": [
+      {
+        "id": "1",
+        "required": "true",
+        "name": "Nombre",
+        "value": "Daniel guerra",
+        "dataType": "text"
+      },
+      {
+        "id": "2",
+        "required": "true",
+        "name": "Teléfono",
+        "value": "664184567",
+        "countryCode": "ES",
+        "dialCode": "+34",
+        "type": "mobile"
+      },
+      {
+        "id": "3",
+        "required": "false",
+        "name": "Email",
+        "value": "danywar1995@hotmail.com",
+        "dataType": "mail"
+      }
+    ],
+    "companyId": "anthares_barber",
+    "employeeId": "7",
+    "origin": "clientWeb"
+  }
+]
