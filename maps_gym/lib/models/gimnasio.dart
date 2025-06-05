@@ -15,6 +15,7 @@ class Gimnasio {
   final List<String>? tipos;
   final String? numeroTelefono;
   final String? sitioWeb;
+  final List<String>? horarios; // Horarios de apertura por día
 
   Gimnasio({
     required this.nombre,
@@ -29,10 +30,16 @@ class Gimnasio {
     this.tipos,
     this.numeroTelefono,
     this.sitioWeb,
+    this.horarios,
   });
 
   /// Crea un objeto Gimnasio a partir de los datos de la API de Google Places
   factory Gimnasio.fromJson(Map<String, dynamic> json) {
+    List<String>? horarios;
+    if (json['opening_hours'] != null && json['opening_hours']['weekday_text'] != null) {
+      horarios = List<String>.from(json['opening_hours']['weekday_text']);
+    }
+
     return Gimnasio(
       nombre: json['name'] ?? '',
       direccion: json['vicinity'] ?? '',
@@ -46,6 +53,7 @@ class Gimnasio {
       tipos: (json['types'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
       numeroTelefono: json['formatted_phone_number'],
       sitioWeb: json['website'],
+      horarios: horarios,
     );
   }
 
@@ -66,7 +74,10 @@ class Gimnasio {
       'place_id': placeId,
       'rating': rating,
       'user_ratings_total': totalRatings,
-      'opening_hours': isOpen != null ? {'open_now': isOpen} : null,
+      'opening_hours': isOpen != null ? {
+        'open_now': isOpen,
+        'weekday_text': horarios,
+      } : null,
       'types': tipos,
       'formatted_phone_number': numeroTelefono,
       'website': sitioWeb,
@@ -104,6 +115,7 @@ class Gimnasio {
     List<String>? tipos,
     String? numeroTelefono,
     String? sitioWeb,
+    List<String>? horarios,
   }) {
     return Gimnasio(
       nombre: nombre ?? this.nombre,
@@ -118,6 +130,7 @@ class Gimnasio {
       tipos: tipos ?? this.tipos,
       numeroTelefono: numeroTelefono ?? this.numeroTelefono,
       sitioWeb: sitioWeb ?? this.sitioWeb,
+      horarios: horarios ?? this.horarios,
     );
   }
 

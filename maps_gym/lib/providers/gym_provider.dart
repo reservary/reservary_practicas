@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../models/gimnasio.dart';
 
 /// Gestiona el estado del gimnasio seleccionado por el usuario
-class GymProvider extends ChangeNotifier {
+class GymProvider with ChangeNotifier {
   Gimnasio? _selectedGym;
 
   /// Obtiene el gimnasio actualmente seleccionado

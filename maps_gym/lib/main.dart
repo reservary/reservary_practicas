@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/map_view_screen.dart';
 import 'screens/my_gym_view.dart';
+import 'screens/gym_info_view.dart';
 import 'models/gimnasio.dart';
 import 'providers/gym_provider.dart';
 
@@ -52,7 +53,11 @@ class MainScreenState extends State<MainScreen> {
           const MapViewScreen(),
           Consumer<GymProvider>(
             builder: (context, gymProvider, child) {
-              return const MyGymView();
+              final Gimnasio? selectedGym = gymProvider.selectedGym;
+              if (selectedGym == null) {
+                return const MyGymView();
+              }
+              return GymInfoView(gym: selectedGym);
             },
           ),
         ],

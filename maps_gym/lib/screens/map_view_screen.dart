@@ -51,6 +51,7 @@ class _MapViewScreenState extends State<MapViewScreen> {
   bool _isUserMovingMap = false;
   String? _errorMessage;
   final TextEditingController _searchController = TextEditingController();
+  bool _isDialogOpen = false;
 
   final Location location = Location();
 
@@ -80,7 +81,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
         permissionGranted = await location.requestPermission();
         if (permissionGranted != PermissionStatus.granted) {
           setState(() {
-            _errorMessage = 'Se necesitan permisos de ubicación para mostrar gimnasios cercanos';
+            _errorMessage =
+                'Se necesitan permisos de ubicación para mostrar gimnasios cercanos';
           });
           return;
         }
@@ -137,11 +139,9 @@ class _MapViewScreenState extends State<MapViewScreen> {
     });
 
     try {
-      final url = Uri.parse(
-        '${Config.proxyUrl}/places'
-        '?lat=${_userLocation!.latitude}'
-        '&lng=${_userLocation!.longitude}'
-      );
+      final url = Uri.parse('${Config.proxyUrl}/places'
+          '?lat=${_userLocation!.latitude}'
+          '&lng=${_userLocation!.longitude}');
 
       final response = await http.get(url).timeout(
         const Duration(seconds: 10),
@@ -164,11 +164,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
             _markers.add(Marker(
               markerId: MarkerId('gym_$i'),
               position: gym.latLng,
-              infoWindow: InfoWindow(
-                title: gym.nombre,
-                snippet: gym.direccion,
-              ),
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueRed),
               onTap: () {
                 _mapController?.animateCamera(
                   CameraUpdate.newLatLngZoom(gym.latLng, 15),
@@ -178,7 +175,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
             ));
 
             if (gym.photoReference != null) {
-              final photoUrl = '${Config.proxyUrl}/photo?photoreference=${gym.photoReference}';
+              final photoUrl =
+                  '${Config.proxyUrl}/photo?photoreference=${gym.photoReference}';
               _loadCustomMarker(photoUrl, i);
             }
           }
@@ -197,7 +195,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
       }
     } on TimeoutException {
       setState(() {
-        _errorMessage = 'La conexión tardó demasiado. Por favor, verifica tu conexión a internet.';
+        _errorMessage =
+            'La conexión tardó demasiado. Por favor, verifica tu conexión a internet.';
       });
     } catch (e) {
       setState(() {
@@ -210,21 +209,190 @@ class _MapViewScreenState extends State<MapViewScreen> {
     }
   }
 
-  void _mostrarDetallesGimnasio(Gimnasio gimnasio) {
-    showDialog(
+  Future<void> _mostrarDetallesGimnasio(Gimnasio gimnasio) async {
+    if (_isDialogOpen) return; // Evitar abrir múltiples diálogos
+
+    // Obtener detalles completos del lugar
+    try {
+      final url = Uri.parse('${Config.proxyUrl}/place-details?place_id=${gimnasio.placeId}');
+      final response = await http.get(url).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException('La conexión tardó demasiado');
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'OK') {
+          final result = data['result'];
+          gimnasio = Gimnasio.fromJson(result);
+        }
+      }
+    } catch (e) {
+      print('Error obteniendo detalles del lugar: $e');
+    }
+
+    if (!context.mounted) return;
+
+    setState(() {
+      _isDialogOpen = true;
+    });
+
+    // Función para verificar si un enlace es un sitio web oficial
+    bool esSitioWebOficial(String url) {
+      final urlLower = url.toLowerCase();
+      // Lista de dominios que queremos excluir
+      final dominiosExcluidos = [
+        'whatsapp.com',
+        'wa.me',
+        'facebook.com',
+        'instagram.com',
+        'twitter.com',
+        'linkedin.com',
+        'youtube.com',
+        'tiktok.com',
+        'pinterest.com',
+        'snapchat.com',
+        'telegram.me',
+        't.me',
+        'messenger.com',
+        'fb.com',
+        'fb.me',
+        'goo.gl',
+        'bit.ly',
+        'tinyurl.com',
+        'maps.app.goo.gl',
+        'maps.google.com',
+      ];
+
+      // Verificar si la URL contiene alguno de los dominios excluidos
+      for (var dominio in dominiosExcluidos) {
+        if (urlLower.contains(dominio)) {
+          return false;
+        }
+      }
+
+      // Verificar si es una URL válida que comienza con http/https
+      return urlLower.startsWith('http://') || urlLower.startsWith('https://');
+    }
+
+    // Función para mostrar la imagen en pantalla completa
+    void _mostrarImagenCompleta() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Stack(
+              children: [
+                InteractiveViewer(
+                  minScale: 0.5,
+                  maxScale: 4.0,
+                  child: Image.network(
+                    '${Config.proxyUrl}/photo?photoreference=${gimnasio.photoReference}',
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                          color: Colors.white,
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      print('Error loading image: $error');
+                      return const Center(
+                        child: Icon(Icons.error_outline,
+                            color: Colors.red, size: 50),
+                      );
+                    },
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: IconButton(
+                    icon:
+                        const Icon(Icons.close, color: Colors.white, size: 30),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+
+    await showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return SimpleDialog(
-          title: Text(gimnasio.nombre),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  gimnasio.nombre,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  // Esperar a que el diálogo se cierre completamente
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  if (mounted) {
+                    setState(() {
+                      _isDialogOpen = false;
+                    });
+                  }
+                },
+                color: Colors.grey,
+              ),
+            ],
+          ),
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(gimnasio.direccion),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on,
+                          size: 16, color: Colors.grey),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          gimnasio.direccion,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  // Sección de Calificación
+                  const Text(
+                    'Calificación',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 70, 206, 255),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   if (gimnasio.rating != null) ...[
-                    const SizedBox(height: 8),
                     Row(
                       children: [
                         Icon(Icons.star, color: Colors.amber, size: 20),
@@ -233,9 +401,27 @@ class _MapViewScreenState extends State<MapViewScreen> {
                           Text(' (${gimnasio.totalRatings} reseñas)'),
                       ],
                     ),
+                  ] else ...[
+                    const Text(
+                      'No hay calificaciones disponibles',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
                   ],
+                  const SizedBox(height: 16),
+                  // Sección de Estado
+                  const Text(
+                    'Estado',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 70, 206, 255),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   if (gimnasio.isOpen != null) ...[
-                    const SizedBox(height: 8),
                     Text(
                       gimnasio.isOpen! ? 'Abierto' : 'Cerrado',
                       style: TextStyle(
@@ -243,63 +429,207 @@ class _MapViewScreenState extends State<MapViewScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ],
-                  if (gimnasio.numeroTelefono != null) ...[
-                    const SizedBox(height: 8),
-                    Text('Teléfono: ${gimnasio.numeroTelefono}'),
-                  ],
-                  if (gimnasio.sitioWeb != null) ...[
-                    const SizedBox(height: 8),
-                    Text('Sitio web: ${gimnasio.sitioWeb}'),
-                  ],
-                  const SizedBox(height: 16),
-                  if (gimnasio.photoReference != null)
-                    Container(
-                      height: 200,
-                      width: 300,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          '${Config.proxyUrl}/photo?photoreference=${gimnasio.photoReference}',
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            print('Error loading image: $error');
-                            return const Center(
-                              child: Icon(Icons.error_outline, color: Colors.red),
-                            );
-                          },
-                        ),
+                  ] else ...[
+                    const Text(
+                      'Estado actual no disponible',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
                       ),
                     ),
+                  ],
                   const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cerrar'),
+                  // Sección de Horarios
+                  const Text(
+                    'Horarios',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 70, 206, 255),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (gimnasio.horarios != null &&
+                      gimnasio.horarios!.isNotEmpty) ...[
+                    ...gimnasio.horarios!.map((horario) => Padding(
+                          padding: const EdgeInsets.only(left: 8, top: 4),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.access_time,
+                                  size: 16, color: Colors.grey),
+                              const SizedBox(width: 8),
+                              Text(horario),
+                            ],
+                          ),
+                        )),
+                  ] else ...[
+                    const Text(
+                      'Horarios no disponibles',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
                       ),
-                      const SizedBox(width: 8),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  // Sección de Contacto
+                  const Text(
+                    'Información de Contacto',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 70, 206, 255),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (gimnasio.numeroTelefono != null) ...[
+                    Row(
+                      children: [
+                        const Icon(Icons.phone, size: 16, color: Colors.grey),
+                        const SizedBox(width: 8),
+                        Text(gimnasio.numeroTelefono!),
+                      ],
+                    ),
+                  ] else ...[
+                    const Text(
+                      'Número de teléfono no disponible',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  if (gimnasio.sitioWeb != null &&
+                      esSitioWebOficial(gimnasio.sitioWeb!)) ...[
+                    InkWell(
+                      onTap: () {
+                        js.context
+                            .callMethod('open', [gimnasio.sitioWeb, '_blank']);
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(Icons.language,
+                              size: 16, color: Colors.blue),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Sitio web',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ] else ...[
+                    const Text(
+                      'Sitio web no disponible',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  // Sección de Imágenes
+                  if (gimnasio.photoReference != null) ...[
+                    const Text(
+                      'Imágenes',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 70, 206, 255),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: _mostrarImagenCompleta,
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: 200,
+                            width: 300,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey.shade300),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                '${Config.proxyUrl}/photo?photoreference=${gimnasio.photoReference}',
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  print('Error loading image: $error');
+                                  return const Center(
+                                    child: Icon(Icons.error_outline,
+                                        color: Colors.red),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 8,
+                            bottom: 8,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.6),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(
+                                Icons.fullscreen,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ] else ...[
+                    const Text(
+                      'Imágenes',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 70, 206, 255),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'No hay imágenes disponibles',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                       ElevatedButton(
                         onPressed: () {
                           context.read<GymProvider>().selectGym(gimnasio);
                           Navigator.pop(context);
-                          // Cambiar a la pestaña de Mi Gimnasio
                           if (context.mounted) {
                             final mainScreen = context.findAncestorStateOfType<MainScreenState>();
                             if (mainScreen != null) {
@@ -307,6 +637,12 @@ class _MapViewScreenState extends State<MapViewScreen> {
                             }
                           }
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 70, 206, 255),
+                          foregroundColor: Colors.white,
+                          alignment: Alignment.center,
+                          minimumSize: const Size(200, 45),
+                        ),
                         child: const Text('Voy a este gimnasio'),
                       ),
                     ],
@@ -318,6 +654,13 @@ class _MapViewScreenState extends State<MapViewScreen> {
         );
       },
     );
+
+    // Asegurarnos de que el estado se actualice después de cerrar el diálogo
+    if (mounted) {
+      setState(() {
+        _isDialogOpen = false;
+      });
+    }
   }
 
   Future<Uint8List> _getGymPhoto(String photoReference) async {
@@ -347,11 +690,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
           _markers.removeWhere((m) => m.markerId.value == 'gym_$index');
           _markers.add(Marker(
             markerId: MarkerId('gym_$index'),
-            position: LatLng(gimnasios[index].latLng.latitude, gimnasios[index].latLng.longitude),
-            infoWindow: InfoWindow(
-              title: gimnasios[index].nombre,
-              snippet: gimnasios[index].direccion,
-            ),
+            position: LatLng(gimnasios[index].latLng.latitude,
+                gimnasios[index].latLng.longitude),
             icon: markerIcon,
             onTap: () {
               _mostrarDetallesGimnasio(gimnasios[index]);
@@ -422,30 +762,36 @@ class _MapViewScreenState extends State<MapViewScreen> {
   }
 
   void _onCameraMove(CameraPosition position) {
-    if (_isSearching) return;
-    
-    // Esperamos a que el usuario termine de mover el mapa antes de buscar
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-      if (!_isUserMovingMap) {
-        _isSearching = true;
-        _userLocation = position.target;
-        
-        setState(() {
-          _markers.removeWhere((m) => m.markerId.value == 'user_marker');
-          _markers.add(Marker(
-            markerId: const MarkerId('user_marker'),
-            position: _userLocation!,
-            infoWindow: const InfoWindow(title: 'Ubicación seleccionada'),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-          ));
-        });
+    if (!_isUserMovingMap) {
+      setState(() {
+        _isUserMovingMap = true;
+      });
+    }
+  }
 
-        _buscarGimnasiosCerca().then((_) {
-          _isSearching = false;
-        });
-      }
+  void _onCameraIdle() {
+    setState(() {
+      _isUserMovingMap = false;
     });
+  }
+
+  void _onMapTap(LatLng location) {
+    if (!_isDialogOpen) {
+      setState(() {
+        _userLocation = location;
+        _markers.removeWhere((m) => m.markerId.value == 'user_marker');
+        _markers.add(Marker(
+          markerId: const MarkerId('user_marker'),
+          position: _userLocation!,
+          infoWindow: const InfoWindow(title: 'Ubicación seleccionada'),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        ));
+      });
+
+      // Buscar gimnasios cerca de la nueva ubicación
+      _buscarGimnasiosCerca();
+    }
   }
 
   @override
@@ -457,12 +803,14 @@ class _MapViewScreenState extends State<MapViewScreen> {
 
   void _centrarEnGimnasio(Gimnasio gimnasio) {
     _isUserMovingMap = true;
-    _mapController?.animateCamera(
+    _mapController
+        ?.animateCamera(
       CameraUpdate.newLatLngZoom(
         gimnasio.latLng,
         15,
       ),
-    ).then((_) {
+    )
+        .then((_) {
       Future.delayed(const Duration(milliseconds: 500), () {
         _isUserMovingMap = false;
       });
@@ -474,7 +822,7 @@ class _MapViewScreenState extends State<MapViewScreen> {
     _isUserMovingMap = true;
     final locData = await location.getLocation();
     final newLocation = LatLng(locData.latitude!, locData.longitude!);
-    
+
     setState(() {
       _userLocation = newLocation;
       _markers.removeWhere((m) => m.markerId.value == 'user_marker');
@@ -491,7 +839,7 @@ class _MapViewScreenState extends State<MapViewScreen> {
     );
 
     await _buscarGimnasiosCerca();
-    
+
     Future.delayed(const Duration(milliseconds: 500), () {
       _isUserMovingMap = false;
     });
@@ -503,7 +851,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
         gimnasiosFiltrados = List.from(gimnasios);
       } else {
         gimnasiosFiltrados = gimnasios
-            .where((gym) => gym.nombre.toLowerCase().contains(query.toLowerCase()))
+            .where(
+                (gym) => gym.nombre.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });
@@ -530,32 +879,82 @@ class _MapViewScreenState extends State<MapViewScreen> {
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 16, bottom: 16, left: 16, right: 16),
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: 'Buscar gimnasio...',
+                            prefixIcon: const Icon(Icons.search),
+                            suffixIcon: _searchController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      _filtrarGimnasios('');
+                                    },
+                                  )
+                                : null,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                          ),
+                          onChanged: _filtrarGimnasios,
+                        ),
+                      ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.6,
                         child: Stack(
                           children: [
-                            GoogleMap(
-                              onMapCreated: (controller) => _mapController = controller,
-                              myLocationEnabled: true,
-                              markers: _markers,
-                              initialCameraPosition: CameraPosition(
-                                target: _userLocation!,
-                                zoom: 15,
-                              ),
-                              onCameraMove: _onCameraMove,
-                              onCameraIdle: () {
-                                _isUserMovingMap = false;
-                              },
-                            ),
-                            Positioned(
-                              top: 16,
-                              right: 16,
-                              child: FloatingActionButton(
-                                onPressed: _irAUbicacionActual,
-                                child: const Icon(Icons.my_location),
-                                backgroundColor: Colors.blue,
+                            IgnorePointer(
+                              ignoring: _isDialogOpen,
+                              child: GoogleMap(
+                                onMapCreated: (controller) =>
+                                    _mapController = controller,
+                                myLocationEnabled: true,
+                                markers: _markers,
+                                initialCameraPosition: CameraPosition(
+                                  target: _userLocation!,
+                                  zoom: 15,
+                                ),
+                                onCameraMove: _onCameraMove,
+                                onCameraIdle: _onCameraIdle,
+                                onTap: _onMapTap,
                               ),
                             ),
+                            if (_isUserMovingMap)
+                              Positioned(
+                                left: 16,
+                                bottom: 16,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.7),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Text(
+                                    'Para cambiar tu ubicación en el mapa, pulsa en el lugar que desees',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            if (!_isDialogOpen)
+                              Positioned(
+                                top: 16,
+                                right: 16,
+                                child: FloatingActionButton(
+                                  onPressed: _irAUbicacionActual,
+                                  child: const Icon(Icons.my_location),
+                                  backgroundColor: Colors.blue,
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -574,30 +973,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
                           children: [
                             const Text(
                               "Lista de Gimnasios",
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 16),
-                            // Campo de búsqueda
-                            TextField(
-                              controller: _searchController,
-                              decoration: InputDecoration(
-                                hintText: 'Buscar gimnasio...',
-                                prefixIcon: const Icon(Icons.search),
-                                suffixIcon: _searchController.text.isNotEmpty
-                                    ? IconButton(
-                                        icon: const Icon(Icons.clear),
-                                        onPressed: () {
-                                          _searchController.clear();
-                                          _filtrarGimnasios('');
-                                        },
-                                      )
-                                    : null,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              ),
-                              onChanged: _filtrarGimnasios,
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 16),
                             // Lista de gimnasios filtrados
@@ -607,24 +984,30 @@ class _MapViewScreenState extends State<MapViewScreen> {
                                     onTap: () => _centrarEnGimnasio(gimnasio),
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.fitness_center, color: Colors.blue),
+                                        const Icon(Icons.fitness_center,
+                                            color: Colors.blue),
                                         const SizedBox(width: 12),
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 gimnasio.nombre,
-                                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                                style: const TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
                                               Text(
                                                 gimnasio.direccion,
-                                                style: const TextStyle(color: Colors.grey),
+                                                style: const TextStyle(
+                                                    color: Colors.grey),
                                               ),
                                             ],
                                           ),
                                         ),
-                                        const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                                        const Icon(Icons.arrow_forward_ios,
+                                            size: 16, color: Colors.grey),
                                       ],
                                     ),
                                   ),

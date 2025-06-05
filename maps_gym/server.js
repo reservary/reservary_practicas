@@ -21,6 +21,20 @@ app.get('/places', async (req, res) => {
   }
 });
 
+// Endpoint para obtener detalles de un lugar
+app.get('/place-details', async (req, res) => {
+  try {
+    const { place_id } = req.query;
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=name,vicinity,geometry,photos,place_id,rating,user_ratings_total,opening_hours,formatted_phone_number,website,types&key=${GOOGLE_API_KEY}`
+    );
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error al obtener detalles del lugar:', error);
+    res.status(500).json({ error: 'Error al obtener detalles del lugar' });
+  }
+});
+
 // Endpoint para obtener fotos
 app.get('/photo', async (req, res) => {
   try {
